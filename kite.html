@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kite Trading | Coming Soon</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@600;700;800&family=Fira+Code:wght@400&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="icon" type="image/webp" href="favicon.webp" />
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+      :root {
+        --brand-blue: #3772ff;
+        --brand-orange: #ff5722;
+        --surface-dark: #050505;
+      }
+
+      body {
+        background-color: var(--surface-dark);
+        color: white;
+        overflow-x: hidden;
+      }
+
+      /* --- SMART NAV --- */
+      nav {
+        background: transparent !important;
+        backdrop-filter: none !important;
+        transition: all 0.4s ease;
+      }
+      nav.scrolled {
+        background: rgba(10, 10, 10, 0.8) !important;
+        backdrop-filter: blur(15px) !important;
+        -webkit-backdrop-filter: blur(15px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      
+      @media (max-width: 768px) {
+          nav, nav.scrolled {
+            padding: 1.5rem 6vw !important;
+            mix-blend-mode: normal !important;
+          }
+          .nav-links { display: flex !important; gap: 1rem; }
+          .nav-item {
+            color: #fff !important;
+            font-size: 0.85rem;
+          }
+          nav { background: transparent; }
+          nav.scrolled { background: rgba(10, 10, 10, 0.85) !important; }
+      }
+
+      /* --- HERO SECTION --- */
+      .cs-hero {
+        position: relative;
+        padding: 20vh 8vw 10vh;
+        min-height: 85vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+      }
+
+      /* Progress Bar Animation */
+      .progress-bar {
+        width: 200px;
+        height: 4px;
+        background: #222;
+        margin-bottom: 2rem;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .progress-fill {
+        width: 65%; /* Change this to update progress */
+        height: 100%;
+        background: var(--brand-blue);
+        box-shadow: 0 0 10px var(--brand-blue);
+      }
+
+      .status-tag {
+        font-family: 'Fira Code', monospace;
+        color: var(--brand-orange);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        display: block;
+      }
+
+      .cs-title {
+        font-size: clamp(3rem, 10vw, 8rem);
+        line-height: 0.95;
+        font-family: "Syne", sans-serif;
+        margin-bottom: 2rem;
+        color: transparent;
+        -webkit-text-stroke: 1px white;
+        opacity: 0.8;
+      }
+
+      .cs-intro {
+        font-size: clamp(1rem, 2vw, 1.25rem);
+        max-width: 600px;
+        color: #ccc;
+        line-height: 1.6;
+      }
+
+      /* --- TECH STACK GRID --- */
+      .tech-preview {
+        padding: 10vh 8vw;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+      }
+
+      .tech-card {
+        background: #0f0f0f;
+        padding: 2rem;
+        border: 1px solid #222;
+        border-radius: 12px;
+      }
+
+      .tech-card h3 {
+        color: #fff;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .tech-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .tech-pill {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 50px;
+        color: #888;
+      }
+
+      @media (max-width: 768px) {
+        .tech-preview { grid-template-columns: 1fr; gap: 2rem; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cursor"></div>
+
+    <nav>
+      <a href="index.html" class="logo mouse-hover">SWAYAM.DEV</a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-item mouse-hover">Back to Home</a>
+      </div>
+    </nav>
+
+    <section class="cs-hero">
+      <div class="reveal-text">
+        <span class="status-tag">&lt; SYSTEM_STATUS: BUILDING /&gt;</span>
+        
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+
+        <h1 class="cs-title">
+          KITE<br /><span style="color: white; -webkit-text-stroke: 0">TRADING</span>
+        </h1>
+        
+        <p class="cs-intro">
+          A high-frequency trading platform clone engineered for speed. 
+          Currently implementing WebSocket pipelines for real-time stock data 
+          and order execution.
+        </p>
+      </div>
+    </section>
+
+    <section class="tech-preview reveal-text">
+        <div class="tech-card">
+            <h3>Backend Architecture</h3>
+            <div class="tech-list">
+                <span class="tech-pill">Node.js</span>
+                <span class="tech-pill">WebSockets (Socket.io)</span>
+                <span class="tech-pill">MongoDB</span>
+            </div>
+        </div>
+        <div class="tech-card">
+            <h3>Frontend Experience</h3>
+            <div class="tech-list">
+                <span class="tech-pill">React</span>
+                <span class="tech-pill">Lightweight Charts</span>
+                <span class="tech-pill">TailwindCSS</span>
+                <span class="tech-pill">Framer Motion</span>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+      <div class="footer-split">
+        <div class="footer-left">
+          <h2 class="footer-title">STAY<br />TUNED</h2>
+          <p style="color: #888; margin-bottom: 2rem">
+            This project will be live soon.
+          </p>
+          <a href="mailto:swayampurwar111104@gmail.com" class="mouse-hover" style="text-decoration: underline">hello@swayam.dev</a>
+        </div>
+        <div class="footer-right">
+            <p style="color: #666">&copy; 2026 Swayam.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+      // 1. Disable Right Click
+      document.addEventListener("contextmenu", (e) => e.preventDefault());
+      
+      // 2. Nav Logic
+      const nav = document.querySelector('nav');
+      if(nav) {
+          window.addEventListener('scroll', () => {
+              if (window.scrollY > 50) nav.classList.add('scrolled');
+              else nav.classList.remove('scrolled');
+          });
+      }
+
+      // 3. Custom Cursor
+      const cursor = document.getElementById("cursor");
+      const xTo = gsap.quickTo(cursor, "x", {duration: 0.1, ease: "power3.out"});
+      const yTo = gsap.quickTo(cursor, "y", {duration: 0.1, ease: "power3.out"});
+
+      if (window.matchMedia("(pointer: fine)").matches) {
+          document.addEventListener("mousemove", (e) => {
+            xTo(e.clientX);
+            yTo(e.clientY);
+          });
+          document.querySelectorAll(".mouse-hover").forEach((el) => {
+            el.addEventListener("mouseenter", () => cursor.classList.add("hovered"));
+            el.addEventListener("mouseleave", () => cursor.classList.remove("hovered"));
+          });
+      }
+
+      // 4. Reveal Animations
+      gsap.registerPlugin(ScrollTrigger);
+      
+      gsap.from(".progress-bar", {width: 0, duration: 1.5, ease: "power4.out", delay: 0.2});
+      
+      gsap.from(".cs-title", {
+        y: 50, opacity: 0, duration: 1, ease: "power3.out", delay: 0.5
+      });
+      
+      gsap.from(".cs-intro", {
+        y: 20, opacity: 0, duration: 1, ease: "power3.out", delay: 0.7
+      });
+
+      gsap.from(".tech-card", {
+        scrollTrigger: { trigger: ".tech-preview", start: "top 80%" },
+        y: 30, opacity: 0, duration: 0.8, stagger: 0.2, ease: "power3.out"
+      });
+      
+      // 5. Magnetic Buttons
+      const magnets = document.querySelectorAll(".nav-item, .tech-pill");
+      magnets.forEach((magnet) => {
+        magnet.addEventListener("mousemove", (e) => {
+          const bounding = magnet.getBoundingClientRect();
+          const strength = 20;
+          const newX = (e.clientX - bounding.left) / magnet.offsetWidth - 0.5;
+          const newY = (e.clientY - bounding.top) / magnet.offsetHeight - 0.5;
+          gsap.to(magnet, { duration: 1, x: newX * strength, y: newY * strength, ease: "power4.out" });
+        });
+        magnet.addEventListener("mouseleave", () => {
+          gsap.to(magnet, { duration: 1, x: 0, y: 0, ease: "elastic.out(1, 0.3)" });
+        });
+      });
+    </script>
+  </body>
+</html>

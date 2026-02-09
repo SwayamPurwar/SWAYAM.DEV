@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Apple Music Redesign | UX Case Study</title>
+    <meta
+      name="description"
+      content="A comprehensive UX Case Study on redesigning Apple Music for better immersion and usability."
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="icon" type="image/webp" href="favicon.webp" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="apple-touch-icon" href="favicon.png" />
+
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+      /* --- PREMIUM CASE STUDY STYLES --- */
+      :root {
+        --brand-color: #fc3c44;
+        --surface-dark: #0a0a0a;
+        --surface-light: #1c1c1e;
+        --text-muted: #86868b;
+      }
+
+      body {
+        background-color: var(--surface-dark);
+        color: white;
+        overflow-x: hidden;
+      }
+      
+      /* --- SMART NAV STYLES --- */
+      nav {
+        background: transparent !important;
+        backdrop-filter: none !important;
+        transition: all 0.4s ease;
+      }
+
+      nav.scrolled {
+        background: rgba(10, 10, 10, 0.8) !important;
+        backdrop-filter: blur(15px) !important;
+        -webkit-backdrop-filter: blur(15px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      
+      /* --- MOBILE NAV VISIBILITY FIX --- */
+      @media (max-width: 768px) {
+          /* Force nav links to show */
+          .nav-links {
+            display: flex !important;
+            gap: 1.5rem;
+          }
+          
+          /* Ensure text is white */
+          .nav-item {
+            color: #ffffff !important;
+            font-size: 0.9rem;
+          }
+          
+          /* Ensure Nav Padding stays consistent on mobile */
+          nav, nav.scrolled {
+             padding: 1.5rem 2rem !important;
+             mix-blend-mode: normal !important;
+          }
+          
+          /* Background visibility on mobile */
+          nav { background: transparent; }
+          nav.scrolled { background: rgba(10, 10, 10, 0.85) !important; }
+      }
+
+      /* 1. CINEMATIC HERO */
+      .cs-hero {
+        position: relative;
+        padding: 25vh 8vw 10vh;
+        min-height: 95vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      /* Background Gradient Blob */
+      .hero-glow {
+        position: absolute;
+        top: -20%;
+        right: -10%;
+        width: 50vw;
+        height: 50vw;
+        background: radial-gradient(
+          circle,
+          rgba(252, 60, 68, 0.4) 0%,
+          rgba(0, 0, 0, 0) 70%
+        );
+        filter: blur(80px);
+        z-index: -1;
+        opacity: 0.6;
+      }
+
+      .cs-title {
+        font-size: clamp(3rem, 11vw, 11rem);
+        line-height: 0.9;
+        font-family: "Syne", sans-serif;
+        letter-spacing: -0.02em;
+        margin-bottom: 3rem;
+        z-index: 2;
+      }
+
+      .cs-tags {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .cs-tag {
+        padding: 8px 16px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 100px;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      /* 2. STATS GRID */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 2rem 0;
+        margin: 0 8vw;
+      }
+
+      .stat-item h4 {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+      }
+      .stat-item p {
+        font-size: 1.2rem;
+        font-weight: 500;
+      }
+
+      /* 3. IMMERSIVE CONTENT BLOCKS */
+      .content-block {
+        padding: 15vh 8vw;
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 5rem;
+      }
+
+      .section-label {
+        font-family: "Syne", sans-serif;
+        font-size: 2.5rem;
+        color: white;
+        position: sticky;
+        top: 10vh;
+        line-height: 1;
+      }
+
+      .text-body p {
+        font-size: 1.3rem;
+        line-height: 1.6;
+        color: #d1d1d6;
+        margin-bottom: 2rem;
+        max-width: 700px;
+      }
+
+      /* 4. DESIGN SYSTEM */
+      .design-system {
+        background: var(--surface-light);
+        padding: 10vh 8vw;
+        margin: 5vh 0;
+        border-radius: 20px;
+      }
+
+      .ds-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 3rem;
+        margin-top: 4rem;
+      }
+
+      .color-bubble {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        margin-bottom: 1rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .ds-text h5 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+      .ds-text span {
+        color: var(--text-muted);
+        font-family: monospace;
+      }
+
+      /* 5. BENTO GRID GALLERY */
+      .bento-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(2, 500px);
+        gap: 1.5rem;
+        padding: 0 8vw 15vh;
+      }
+
+      .bento-item {
+        background: #111;
+        border-radius: 16px;
+        overflow: hidden;
+        position: relative;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .bento-item:hover {
+        transform: translateY(-5px);
+      }
+
+      .bento-item.large {
+        grid-column: span 2;
+      }
+      .bento-item.tall {
+        grid-row: span 2;
+      }
+
+      .bento-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .bento-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 2rem;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+      }
+
+      /* --- RESPONSIVE BREAKPOINTS --- */
+      @media (max-width: 1024px) {
+        .content-block {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+          padding: 10vh 6vw;
+        }
+        .stats-grid {
+          grid-template-columns: 1fr 1fr;
+          gap: 1.5rem;
+          margin: 0 6vw;
+        }
+        .bento-grid {
+          grid-template-columns: 1fr 1fr;
+          grid-template-rows: auto;
+          gap: 1.5rem;
+        }
+        .bento-item.large {
+          grid-column: span 2;
+        }
+        .bento-item.tall {
+          grid-column: span 1;
+          grid-row: span 1;
+          height: 400px;
+        }
+        .section-label {
+          position: relative;
+          top: 0;
+          margin-bottom: 1.5rem;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .cs-hero {
+          padding: 12vh 6vw 5vh;
+          min-height: 70vh;
+          justify-content: flex-end;
+        }
+
+        .cs-title {
+          font-size: 3.5rem;
+          margin-bottom: 1.5rem;
+          word-wrap: break-word;
+        }
+
+        .cs-tags {
+          gap: 0.5rem;
+        }
+
+        .cs-tag {
+          font-size: 0.75rem;
+          padding: 6px 12px;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr 1fr;
+          padding: 1.5rem 0;
+          margin: 0 6vw;
+          gap: 1.5rem;
+          border-bottom: none;
+        }
+
+        .stat-item p {
+          font-size: 1rem;
+        }
+
+        .content-block {
+          padding: 8vh 6vw;
+          gap: 1.5rem;
+        }
+
+        .section-label {
+          font-size: 1.8rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .text-body p {
+          font-size: 1.1rem;
+          line-height: 1.5;
+        }
+
+        .ds-grid {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+          margin-top: 2rem;
+        }
+
+        .design-system {
+          padding: 8vh 6vw;
+          margin: 0;
+          border-radius: 0;
+        }
+
+        .bento-grid {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto;
+          padding: 0 6vw 10vh;
+          gap: 1rem;
+        }
+
+        .bento-item,
+        .bento-item.large,
+        .bento-item.tall {
+          height: 300px;
+          grid-column: span 1;
+          grid-row: span 1;
+        }
+
+        .bento-overlay h3 {
+          font-size: 1.2rem;
+        }
+
+        .bento-overlay p {
+          font-size: 0.9rem;
+        }
+
+        .footer-split {
+          flex-direction: column;
+          gap: 2rem;
+          align-items: flex-start;
+        }
+
+        .hero-glow {
+          width: 100%;
+          height: 60vh;
+          opacity: 0.5;
+          filter: blur(60px);
+        }
+
+        .reveal-img {
+          height: 40vh !important;
+          margin: 2vh 6vw !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cursor"></div>
+
+    <nav>
+      <a href="index.html" class="logo mouse-hover">SWAYAM.DEV</a>
+      <div class="nav-links">
+        <a href="apple-music.html" class="nav-item mouse-hover">Back</a>
+      </div>
+    </nav>
+
+    <header class="cs-hero">
+      <div class="hero-glow"></div>
+
+      <div class="reveal-text">
+        <div class="cs-tags">
+          <span class="cs-tag mouse-hover">UX Research</span>
+          <span class="cs-tag mouse-hover">Interface Design</span>
+          <span class="cs-tag mouse-hover">Prototyping</span>
+        </div>
+        <h1 class="cs-title">
+          RETHINKING<br /><span style="color: var(--brand-color)"
+            >APPLE MUSIC</span
+          >
+        </h1>
+      </div>
+    </header>
+
+    <div class="stats-grid reveal-text">
+      <div class="stat-item">
+        <h4>My Role</h4>
+        <p>Product Designer</p>
+      </div>
+      <div class="stat-item">
+        <h4>Timeline</h4>
+        <p>14 Days (Sprint)</p>
+      </div>
+      <div class="stat-item">
+        <h4>Tools</h4>
+        <p>Figma, Spline, Principle</p>
+      </div>
+      <div class="stat-item">
+        <h4>Outcome</h4>
+        <p>Interactive Prototype</p>
+      </div>
+    </div>
+
+    <div
+      class="reveal-img"
+      style="
+        margin: 5vh 8vw;
+        height: 80vh;
+        overflow: hidden;
+        border-radius: 16px;
+      "
+    >
+      <img
+        src="https://images.unsplash.com/photo-1614680376593-902f74cf0d41?q=80&w=2400&auto=format&fit=crop"
+        alt="Apple Music Hero Mockup"
+        width="1920"
+        height="1080"
+        style="width: 100%; height: 100%; object-fit: cover"
+      />
+    </div>
+
+    <section class="content-block reveal-text">
+      <h2 class="section-label">01 / THE CONTEXT</h2>
+      <div class="text-body">
+        <p>
+          <strong>The Problem:</strong> While Apple Music offers superior audio
+          quality, its interface has often been criticized for being "sterile"
+          compared to the vibrant community of Spotify. Users find the
+          navigation clunky, often requiring 3-4 taps just to access their
+          library.
+        </p>
+        <p>
+          <strong>The Goal:</strong> To create an interface that feels "alive."
+          I wanted to merge the album art with the UI, creating a fluid,
+          glassmorphic experience that adapts to the mood of the song.
+        </p>
+      </div>
+    </section>
+
+    <section class="design-system reveal-text">
+      <h2 class="section-label" style="margin-bottom: 2rem">
+        02 / VISUAL IDENTITY
+      </h2>
+      <p style="color: #999; max-width: 600px">
+        I refined the Apple Design System to be darker and more immersive. The
+        color palette extracts key tones from album art dynamically.
+      </p>
+
+      <div class="ds-grid">
+        <div class="ds-item">
+          <div class="color-bubble" style="background: #fc3c44"></div>
+          <div class="ds-text">
+            <h5>Brand Red</h5>
+            <span>#FC3C44</span>
+          </div>
+        </div>
+        <div class="ds-item">
+          <div
+            class="color-bubble"
+            style="
+              background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.1),
+                rgba(255, 255, 255, 0.02)
+              );
+              border: 1px solid rgba(255, 255, 255, 0.1);
+            "
+          ></div>
+          <div class="ds-text">
+            <h5>Glass Surface</h5>
+            <span>Blur 20px</span>
+          </div>
+        </div>
+        <div class="ds-item">
+          <div class="ds-text">
+            <h5
+              style="
+                font-family: &quot;Syne&quot;, sans-serif;
+                font-size: 3rem;
+                margin-bottom: 0;
+              "
+            >
+              Syne
+            </h5>
+            <p style="color: #666">Headlines</p>
+            <h5
+              style="
+                font-family: &quot;Inter&quot;, sans-serif;
+                font-size: 1.5rem;
+                margin-top: 1rem;
+                margin-bottom: 0;
+              "
+            >
+              Inter
+            </h5>
+            <p style="color: #666">Body Copy</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="reveal-text" style="padding: 5vh 8vw">
+      <h2 class="section-label" style="margin-bottom: 3rem">
+        03 / KEY FEATURES
+      </h2>
+    </section>
+
+    <div class="bento-grid reveal-text">
+      <div class="bento-item large">
+        <img
+          src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000&auto=format&fit=crop"
+          alt="Immersive Player Interface"
+          loading="lazy"
+        />
+        <div class="bento-overlay">
+          <h3>Dynamic Backgrounds</h3>
+          <p style="color: #ccc">
+            UI colors shift in real-time based on the album artwork.
+          </p>
+        </div>
+      </div>
+
+      <div class="bento-item tall">
+        <img
+          src="https://images.unsplash.com/photo-1614680376408-81e91ffe3db7?q=80&w=1000&auto=format&fit=crop"
+          alt="Mobile Menu"
+          loading="lazy"
+        />
+        <div class="bento-overlay">
+          <h3>Gesture Nav</h3>
+          <p style="color: #ccc">One-handed control for commuters.</p>
+        </div>
+      </div>
+
+      <div class="bento-item">
+        <img
+          src="https://images.unsplash.com/photo-1596558450255-7c0b7be9d56a?q=80&w=1000&auto=format&fit=crop"
+          alt="Lyrics View"
+          loading="lazy"
+        />
+        <div class="bento-overlay">
+          <h3>Live Lyrics</h3>
+          <p style="color: #ccc">
+            Karaoke mode with synchronized glowing text.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <footer id="contact">
+      <div class="footer-split">
+        <div class="footer-left">
+          <h2 class="footer-title">NEXT<br />PROJECT</h2>
+          <a
+            href="instagram.html"
+            class="mouse-hover"
+            style="text-decoration: underline; color: #888; font-size: 1.5rem"
+            >Instagram Clone &rarr;</a
+          >
+        </div>
+        <div class="footer-right">
+          <p style="color: #666">&copy; 2026 Swayam.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"
+      defer
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"
+      defer
+    ></script>
+
+    <script defer>
+      // 1. Disable Right Click
+      document.addEventListener("contextmenu", (event) =>
+        event.preventDefault(),
+      );
+      // 2. Disable Keyboard Shortcuts (F12, etc.)
+      document.onkeydown = function (e) {
+        if (event.keyCode == 123) return false;
+        if (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 67 || e.keyCode == 74)) return false;
+        if (e.ctrlKey && e.keyCode == 85) return false;
+      };
+
+      document.addEventListener("DOMContentLoaded", (event) => {
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // 3. SMART NAV LOGIC
+        const nav = document.querySelector('nav');
+        if(nav) {
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+            });
+        }
+
+        // 4. CUSTOM CURSOR
+        const cursor = document.getElementById("cursor");
+        const xTo = gsap.quickTo(cursor, "x", {
+          duration: 0.1,
+          ease: "power3.out",
+        });
+        const yTo = gsap.quickTo(cursor, "y", {
+          duration: 0.1,
+          ease: "power3.out",
+        });
+
+        if (window.matchMedia("(pointer: fine)").matches) {
+          document.addEventListener("mousemove", (e) => {
+            xTo(e.clientX);
+            yTo(e.clientY);
+          });
+          document.querySelectorAll(".mouse-hover").forEach((el) => {
+            el.addEventListener("mouseenter", () =>
+              cursor.classList.add("hovered"),
+            );
+            el.addEventListener("mouseleave", () =>
+              cursor.classList.remove("hovered"),
+            );
+          });
+        }
+
+        // 5. REVEAL ANIMATIONS
+        gsap.from(".cs-title", {
+          y: 100,
+          opacity: 0,
+          duration: 1.2,
+          ease: "power4.out",
+          delay: 0.2,
+        });
+        gsap.from(".cs-tags", { y: 20, opacity: 0, duration: 1, delay: 0.5 });
+
+        gsap.from(".stat-item", {
+          y: 20,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.1,
+          scrollTrigger: { trigger: ".stats-grid", start: "top 90%" },
+        });
+
+        gsap.utils.toArray(".reveal-text").forEach((section) => {
+          gsap.from(section, {
+            scrollTrigger: { trigger: section, start: "top 85%" },
+            y: 40,
+            opacity: 0,
+            duration: 1,
+            ease: "power3.out",
+          });
+        });
+
+        gsap.from(".bento-item", {
+          scrollTrigger: { trigger: ".bento-grid", start: "top 80%" },
+          y: 50,
+          opacity: 0,
+          duration: 1,
+          stagger: 0.2,
+          ease: "power3.out",
+        });
+        
+        // 6. MAGNETIC BUTTON EFFECT (ADDED)
+        const magnets = document.querySelectorAll(
+            ".nav-item, .submit-btn, .footer-link, .btn, .socials a, .cv-btn, .cs-tag"
+        );
+
+        magnets.forEach((magnet) => {
+            magnet.addEventListener("mousemove", (e) => {
+            const bounding = magnet.getBoundingClientRect();
+            const magnetsStrength = 40;
+            const newX = (e.clientX - bounding.left) / magnet.offsetWidth - 0.5;
+            const newY = (e.clientY - bounding.top) / magnet.offsetHeight - 0.5;
+
+            gsap.to(magnet, {
+                duration: 1,
+                x: newX * magnetsStrength,
+                y: newY * magnetsStrength,
+                ease: "power4.out",
+            });
+            });
+
+            magnet.addEventListener("mouseleave", () => {
+            gsap.to(magnet, {
+                duration: 1,
+                x: 0,
+                y: 0,
+                ease: "elastic.out(1, 0.3)",
+            });
+            });
+        });
+      });
+    </script>
+  </body>
+</html>

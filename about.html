@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About Swayam | Creative Developer</title>
+
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/webp" href="favicon.webp" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syne:wght@400;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* --- PAGE SPECIFIC STYLES --- */
+      body {
+        background-color: var(--bg-color);
+        overflow-x: hidden;
+      }
+
+      /* HERO SECTION */
+      .a-hero {
+        padding: 20vh 10vw 10vh;
+        min-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .a-title {
+        font-size: clamp(3rem, 10vw, 10rem);
+        line-height: 0.9;
+        font-family: "Syne", sans-serif;
+        color: #f0f0f0;
+        margin-bottom: 2rem;
+        text-transform: uppercase;
+      }
+
+      .a-subtitle {
+        font-size: 1.2rem;
+        color: #888;
+        max-width: 600px;
+        line-height: 1.6;
+      }
+
+      /* PHOTO & BIO SECTION */
+      .bio-section {
+        padding: 0 10vw 10vh;
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 5rem;
+        align-items: start;
+      }
+
+      .bio-img-wrapper {
+        width: 100%;
+        height: 60vh;
+        overflow: hidden;
+        border-radius: 4px;
+        position: sticky;
+        top: 10vh; /* Sticky scroll effect */
+      }
+
+      .bio-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: grayscale(100%) contrast(1.1);
+        transition: 0.5s ease;
+      }
+      .bio-img:hover {
+        filter: grayscale(0%);
+      }
+
+      .bio-text p {
+        font-size: 1.5rem;
+        line-height: 1.6;
+        color: #ccc;
+        margin-bottom: 3rem;
+        font-weight: 300;
+      }
+
+      .bio-text strong {
+        color: white;
+        font-weight: 600;
+      }
+
+      /* INFO GRID (Education & Skills) */
+      .info-grid {
+        border-top: 1px solid #333;
+        padding-top: 4rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+      }
+
+      .info-col h3 {
+        font-size: 1rem;
+        color: #666;
+        margin-bottom: 2rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+
+      .info-item {
+        margin-bottom: 2rem;
+      }
+
+      .info-item h4 {
+        font-size: 1.5rem;
+        color: white;
+        font-family: "Syne", sans-serif;
+        margin-bottom: 0.5rem;
+      }
+
+      .info-item p {
+        color: #888;
+        font-size: 1rem;
+      }
+
+      /* RESPONSIVE */
+      @media (max-width: 1024px) {
+        .bio-section {
+          grid-template-columns: 1fr;
+          gap: 3rem;
+        }
+        .bio-img-wrapper {
+          height: 50vh;
+          position: relative;
+          top: 0;
+        }
+        .info-grid {
+          grid-template-columns: 1fr;
+          gap: 3rem;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .a-hero {
+          padding: 15vh 6vw 5vh;
+        }
+        .bio-section {
+          padding: 0 6vw 10vh;
+        }
+        .bio-text p {
+          font-size: 1.1rem;
+        }
+
+        /* Mobile Nav Fix */
+        .nav-links {
+          display: flex !important;
+          gap: 1rem;
+        }
+        .nav-item {
+          font-size: 0.8rem;
+        }
+        
+        /* Ensure Nav Padding stays consistent on mobile */
+        nav, nav.scrolled {
+           padding: 1.5rem 2rem !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cursor"></div>
+
+    <nav>
+      <a href="index.html" class="logo mouse-hover">SWAYAM.DEV</a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-item mouse-hover">Back Home</a>
+      </div>
+    </nav>
+
+    <header class="a-hero">
+      <h1 class="a-title reveal-text">
+        THE MIND<br /><span
+          style="color: transparent; -webkit-text-stroke: 1px white"
+          >BEHIND</span
+        >
+      </h1>
+      <p class="a-subtitle reveal-text">
+        I craft digital experiences where design meets logic. Driven by
+        precision, powered by code.
+      </p>
+    </header>
+
+    <section class="bio-section">
+      <div class="bio-img-wrapper reveal-img">
+        <img
+          src="swayampurwar.webp" width="600" 
+    height="800" 
+    loading="lazy"
+          alt="Swayam Purwar - Creative Developer based in Bhopal specializing in MongoDB and React"
+          class="bio-img"
+        />
+      </div>
+
+      <div class="bio-text">
+        <div class="reveal-text">
+          <p>
+            Hello, I'm <strong>Swayam</strong>. A creative developer based in
+            Bhopal, India.
+          </p>
+          <p>
+            My journey started with a curiosity for how things work, leading me
+            to pursue a <strong>BCA at LNCT University</strong>. But traditional
+            coding wasn't enough—I wanted to build interfaces that people could
+            <em>feel</em>.
+          </p>
+          <p>
+            I specialize in <strong>React and MongoDB</strong>, bridging the gap
+            between powerful backend logic and fluid frontend interactivity.
+            Whether it's training an AI Voice Assistant or cloning complex apps
+            like Instagram, I obsess over the details.
+          </p>
+        </div>
+
+        <div class="info-grid reveal-text">
+          <div class="info-col">
+            <h3>Education</h3>
+            <div class="info-item">
+              <h4>LNCT University</h4>
+              <p>Bachelors in Computer Applications (BCA)</p>
+              <p>2023 - Present</p>
+            </div>
+          </div>
+
+          <div class="info-col">
+            <h3>Tech Stack</h3>
+            <div class="info-item">
+              <h4>Development</h4>
+              <p>React, JavaScript (ES6+), GSAP, HTML5/CSS3</p>
+            </div>
+            <div class="info-item">
+              <h4>Design</h4>
+              <p>Figma, UI/UX, Motion Design</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer id="contact">
+      <div class="footer-split">
+        <div class="footer-left">
+          <h2 class="footer-title">LET'S WORK<br />TOGETHER</h2>
+          <p style="color: #888; margin-bottom: 2rem">
+            Have a project in mind? Drop me a line.
+          </p>
+          <a
+            href="mailto:swayampurwar111104@gmail.com"
+            class="mouse-hover"
+            style="text-decoration: underline"
+            >hello@swayam.dev</a
+          >
+        </div>
+        <div class="footer-right">
+          <p style="color: #666; font-size: 0.9rem">
+            (Contact Form available on Home Page)
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 Swayam.</span>
+        <div class="socials">
+          <a href="https://www.instagram.com/swayam_purwar?igsh=NmoycTh2cm1iZ3Fu&utm_source=qr" class="mouse-hover" style="margin-left: 1rem"
+            >Instagram</a
+          >
+          <a href="https://www.linkedin.com/in/swayam-purwar-702052248/" class="mouse-hover" style="margin-left: 1rem">LinkedIn</a>
+          <a href="https://github.com/SwayamPurwar" class="mouse-hover" style="margin-left: 1rem">GitHub</a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+      // 1. Disable Right Click
+      document.addEventListener("contextmenu", (event) =>
+        event.preventDefault(),
+      );
+
+      // 2. Disable Keyboard Shortcuts
+      document.onkeydown = function (e) {
+        if (event.keyCode == 123) return false;
+        if (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 67 || e.keyCode == 74)) return false;
+        if (e.ctrlKey && e.keyCode == 85) return false;
+      };
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      // 3. SMART NAV LOGIC (Added)
+      const nav = document.querySelector('nav');
+      if(nav) {
+          window.addEventListener('scroll', () => {
+              if (window.scrollY > 50) {
+                  nav.classList.add('scrolled');
+              } else {
+                  nav.classList.remove('scrolled');
+              }
+          });
+      }
+
+      // 4. CUSTOM CURSOR
+      const cursor = document.getElementById("cursor");
+      const xTo = gsap.quickTo(cursor, "x", {
+        duration: 0.1,
+        ease: "power3.out",
+      });
+      const yTo = gsap.quickTo(cursor, "y", {
+        duration: 0.1,
+        ease: "power3.out",
+      });
+
+      if (window.matchMedia("(pointer: fine)").matches) {
+        document.addEventListener("mousemove", (e) => {
+          xTo(e.clientX);
+          yTo(e.clientY);
+        });
+        document.querySelectorAll(".mouse-hover").forEach((el) => {
+          el.addEventListener("mouseenter", () =>
+            cursor.classList.add("hovered"),
+          );
+          el.addEventListener("mouseleave", () =>
+            cursor.classList.remove("hovered"),
+          );
+        });
+      }
+
+      // 5. ANIMATIONS
+      const tl = gsap.timeline();
+
+      // Hero Reveal
+      tl.from(".a-title", {
+        y: 100,
+        opacity: 0,
+        duration: 1.2,
+        ease: "power4.out",
+        delay: 0.2,
+      });
+      tl.from(
+        ".a-subtitle",
+        { y: 20, opacity: 0, duration: 1, ease: "power3.out" },
+        "-=0.8",
+      );
+
+      // Bio Text Reveal
+      gsap.utils.toArray(".reveal-text").forEach((section) => {
+        gsap.from(section, {
+          scrollTrigger: { trigger: section, start: "top 85%" },
+          y: 50,
+          opacity: 0,
+          duration: 1,
+          ease: "power3.out",
+        });
+      });
+
+      // Image Reveal
+      gsap.from(".bio-img-wrapper", {
+        scrollTrigger: { trigger: ".bio-img-wrapper", start: "top 80%" },
+        scaleY: 0,
+        transformOrigin: "top",
+        duration: 1.5,
+        ease: "power4.inOut",
+      });
+
+      // Parallax Effect on Image
+      gsap.to(".bio-img", {
+        scale: 1.2,
+        scrollTrigger: {
+          trigger: ".bio-img-wrapper",
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+      // ... existing code ...
+
+      // 6. MAGNETIC BUTTON EFFECT
+      const magnets = document.querySelectorAll(
+        ".nav-item, .submit-btn, .footer-link, .btn, .socials a, .cv-btn"
+      );
+
+      magnets.forEach((magnet) => {
+        magnet.addEventListener("mousemove", (e) => {
+          const bounding = magnet.getBoundingClientRect();
+          const magnetsStrength = 40;
+          const newX = (e.clientX - bounding.left) / magnet.offsetWidth - 0.5;
+          const newY = (e.clientY - bounding.top) / magnet.offsetHeight - 0.5;
+
+          gsap.to(magnet, {
+            duration: 1,
+            x: newX * magnetsStrength,
+            y: newY * magnetsStrength,
+            ease: "power4.out",
+          });
+        });
+
+        magnet.addEventListener("mouseleave", () => {
+          gsap.to(magnet, {
+            duration: 1,
+            x: 0,
+            y: 0,
+            ease: "elastic.out(1, 0.3)",
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

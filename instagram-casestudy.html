@@ -1,0 +1,883 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Instagram 2.0 | Architecture Deep Dive</title>
+    <meta
+      name="description"
+      content="A massive, deep-dive engineering case study on building a scalable social media platform."
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@600;700;800&family=Fira+Code:wght@400&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="icon" type="image/webp" href="favicon.webp" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+      /* --- THEME VARIABLES --- */
+      :root {
+        --brand-gradient: linear-gradient(
+          45deg,
+          #f09433 0%,
+          #e6683c 25%,
+          #dc2743 50%,
+          #cc2366 75%,
+          #bc1888 100%
+        );
+        --accent-color: #e1306c;
+        --surface-dark: #000000;
+        --surface-dim: #050505;
+        --surface-card: #0f0f0f;
+        --border-color: rgba(255, 255, 255, 0.08);
+        --text-muted: #888;
+        --code-bg: #0d0d0d;
+      }
+
+      body {
+        background-color: var(--surface-dark);
+        color: white;
+        overflow-x: hidden;
+        margin: 0;
+        padding: 0;
+      }
+      
+      /* --- SMART NAV STYLES --- */
+      nav {
+        background: transparent !important;
+        backdrop-filter: none !important;
+        transition: all 0.4s ease;
+      }
+
+      nav.scrolled {
+        background: rgba(10, 10, 10, 0.8) !important;
+        backdrop-filter: blur(15px) !important;
+        -webkit-backdrop-filter: blur(15px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      
+      /* --- MOBILE NAV VISIBILITY FIX --- */
+      @media (max-width: 768px) {
+          .nav-links {
+            display: flex !important;
+            gap: 1.5rem;
+          }
+          .nav-item {
+            color: #ffffff !important;
+            font-size: 0.9rem;
+          }
+          nav, nav.scrolled {
+            padding: 1.5rem 2rem !important;
+            mix-blend-mode: normal !important; 
+          }
+          nav { background: transparent; }
+          nav.scrolled { background: rgba(10, 10, 10, 0.85) !important; }
+      }
+
+      /* 1. HERO SECTION */
+      .cs-hero {
+        position: relative;
+        padding: 20vh 8vw 10vh;
+        min-height: 90vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .cs-title {
+        font-size: clamp(3.5rem, 12vw, 9rem);
+        line-height: 0.95;
+        font-family: "Syne", sans-serif;
+        letter-spacing: -0.02em;
+        margin-bottom: 2rem;
+        background: var(--brand-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .cs-intro {
+        font-size: clamp(1rem, 2vw, 1.25rem);
+        max-width: 600px;
+        color: #ccc;
+        line-height: 1.6;
+        margin-top: 1rem;
+      }
+
+      /* 2. TABLE OF CONTENTS (Sticky) */
+      .toc-bar {
+        position: sticky;
+        top: 0;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        z-index: 100;
+        border-bottom: 1px solid var(--border-color);
+        padding: 1rem 8vw;
+        display: flex;
+        gap: 2rem;
+        overflow-x: auto;
+        white-space: nowrap;
+        scrollbar-width: none; /* Firefox */
+      }
+      .toc-bar::-webkit-scrollbar {
+        display: none; /* Chrome */
+      }
+
+      .toc-link {
+        color: #666;
+        font-family: "Fira Code", monospace;
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: 0.3s;
+        border-bottom: 2px solid transparent;
+        padding-bottom: 4px;
+      }
+
+      .toc-link:hover,
+      .toc-link.active {
+        color: var(--accent-color);
+        border-bottom-color: var(--accent-color);
+      }
+
+      /* 3. FEATURE DEEP DIVE LAYOUT */
+      .deep-dive-section {
+        padding: 12vh 8vw;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .deep-dive-section.alt {
+        background: var(--surface-dim);
+      }
+
+      .dd-header {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        margin-bottom: 5rem;
+      }
+
+      .dd-label {
+        color: var(--accent-color);
+        font-family: "Fira Code", monospace;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        display: block;
+      }
+
+      .dd-title {
+        font-family: "Syne", sans-serif;
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        line-height: 1;
+      }
+
+      .dd-desc {
+        font-size: 1.1rem;
+        color: #bbb;
+        line-height: 1.7;
+        margin-top: 1rem;
+      }
+
+      /* 4. TECHNICAL DETAILS GRID */
+      .tech-detail-grid {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 5rem;
+        align-items: start;
+      }
+
+      .detail-card {
+        margin-bottom: 3rem;
+      }
+
+      .detail-card h3 {
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+        color: #fff;
+        font-family: "Syne", sans-serif;
+      }
+
+      .detail-card p {
+        color: #999;
+        line-height: 1.6;
+      }
+
+      /* 5. CODE BLOCK STYLING */
+      .code-container {
+        background: var(--code-bg);
+        border: 1px solid #222;
+        border-radius: 8px;
+        overflow: hidden;
+        position: sticky;
+        top: 15vh;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      }
+
+      .code-header {
+        background: #151515;
+        padding: 10px 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #222;
+      }
+
+      .code-lang {
+        font-family: "Fira Code";
+        font-size: 0.7rem;
+        color: #555;
+        text-transform: uppercase;
+      }
+
+      .code-content {
+        padding: 1.5rem;
+        font-family: "Fira Code", monospace;
+        font-size: 0.8rem;
+        color: #a9b7c6;
+        line-height: 1.6;
+        overflow-x: auto;
+      }
+
+      .kwd { color: #cc7832; }
+      .str { color: #6a8759; }
+      .fn { color: #ffc66d; }
+      .com { color: #808080; }
+
+      /* 6. MOCKUP CONTAINERS */
+      .mockup-wide {
+        width: 100%;
+        height: 60vh;
+        background: #111;
+        margin: 0;
+        overflow: hidden;
+        position: relative;
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .mockup-wide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.7;
+      }
+
+      /* --- RESPONSIVE MEDIA QUERIES --- */
+      @media (max-width: 1024px) {
+        .dd-header {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+          margin-bottom: 3rem;
+        }
+
+        .tech-detail-grid {
+          grid-template-columns: 1fr;
+          gap: 3rem;
+        }
+
+        .code-container {
+          position: relative;
+          top: 0;
+          width: 100%;
+          margin-top: 1rem;
+        }
+
+        .mockup-wide {
+          height: 40vh;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .cs-hero {
+          padding: 15vh 6vw 5vh;
+          min-height: 70vh;
+        }
+
+        .deep-dive-section {
+          padding: 10vh 6vw;
+        }
+
+        .dd-title {
+          font-size: 2.5rem;
+        }
+
+        .toc-bar {
+          padding: 1rem 6vw;
+          gap: 1.5rem;
+        }
+
+        .detail-card {
+          margin-bottom: 2rem;
+        }
+
+        .code-content {
+          font-size: 0.75rem; 
+          padding: 1rem;
+        }
+
+        .footer-split {
+          flex-direction: column;
+          gap: 2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="index.html" class="logo mouse-hover">SWAYAM.DEV</a>
+      <div class="nav-links">
+        <a href="instagram.html" class="nav-item mouse-hover">Back</a>
+      </div>
+    </nav>
+
+    <header class="cs-hero">
+      <div class="reveal-text">
+        <span class="dd-label">FULL STACK CASE STUDY</span>
+        <h1 class="cs-title">INSTAGRAM<br />SYSTEM DESIGN</h1>
+        <p class="cs-intro">
+          A comprehensive technical breakdown of building a high-scale social
+          media architecture. Covering everything from Graph Databases to
+          Real-Time WebSockets and AI Content Moderation.
+        </p>
+      </div>
+    </header>
+
+    <div class="toc-bar">
+      <a href="#auth" class="toc-link">01 Auth</a>
+      <a href="#feed" class="toc-link">02 Feed Algo</a>
+      <a href="#media" class="toc-link">03 Media Pipeline</a>
+      <a href="#chat" class="toc-link">04 Chat Engine</a>
+      <a href="#stories" class="toc-link">05 Stories</a>
+      <a href="#search" class="toc-link">06 Search</a>
+      <a href="#deployment" class="toc-link">07 DevOps</a>
+    </div>
+
+    <div class="mockup-wide reveal-img">
+      <img
+        src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=2400&auto=format&fit=crop"
+        alt="UI Mockup"
+      />
+    </div>
+
+    <section id="auth" class="deep-dive-section reveal-text">
+      <div class="dd-header">
+        <div>
+          <span class="dd-label">01 / SECURITY LAYER</span>
+          <h2 class="dd-title">Authentication &<br />Session Management</h2>
+        </div>
+        <p class="dd-desc">
+          Security is the foundation. I implemented a stateless JWT (JSON Web
+          Token) architecture to handle millions of users without server-side
+          session storage bottlenecks.
+        </p>
+      </div>
+
+      <div class="tech-detail-grid">
+        <div class="details">
+          <div class="detail-card">
+            <h3>🛡️ Dual-Token Strategy</h3>
+            <p>
+              To balance security and UX, I used a short-lived
+              <strong>Access Token</strong> (15 min) and a long-lived
+              <strong>Refresh Token</strong> (7 days). The Refresh Token is
+              stored in an <code>HttpOnly</code> cookie to prevent XSS attacks.
+            </p>
+          </div>
+          <div class="detail-card">
+            <h3>🚫 Redis Rate Limiting</h3>
+            <p>
+              Implemented a sliding-window rate limiter using
+              <strong>Redis</strong>. It tracks IP addresses and blocks
+              suspicious traffic (e.g., >100 login attempts per minute) to
+              prevent Brute Force and DDoS attacks.
+            </p>
+          </div>
+        </div>
+
+        <div class="code-container">
+          <div class="code-header">
+            <span class="code-lang">MIDDLEWARE.JS</span>
+          </div>
+          <div class="code-content">
+            <span class="kwd">const</span> verifyToken = (<span class="fn"
+              >req</span
+            >, <span class="fn">res</span>, <span class="fn">next</span>) => {
+            <span class="kwd">const</span> authHeader = req.headers[<span
+              class="str"
+              >'authorization'</span
+            >]; <span class="kwd">const</span> token = authHeader &&
+            authHeader.split(<span class="str">' '</span>)[<span class="fn"
+              >1</span
+            >];
+
+            <span class="kwd">if</span> (!token)
+            <span class="kwd">return</span> res.sendStatus(<span class="fn"
+              >401</span
+            >); jwt.verify(token, process.env.ACCESS_SECRET, (err, user) => {
+            <span class="kwd">if</span> (err)
+            <span class="kwd">return</span> res.sendStatus(<span class="fn"
+              >403</span
+            >); req.user = user; next(); }); };
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="feed" class="deep-dive-section alt reveal-text">
+      <div class="dd-header">
+        <div>
+          <span class="dd-label">02 / CORE ENGINE</span>
+          <h2 class="dd-title">The Infinite Feed<br />Algorithm</h2>
+        </div>
+        <p class="dd-desc">
+          Serving a personalized feed to users in under 200ms requires a
+          sophisticated caching strategy. SQL JOINs are too slow at this scale.
+        </p>
+      </div>
+
+      <div class="tech-detail-grid">
+        <div class="details">
+          <div class="detail-card">
+            <h3>🕸️ Graph Database (Neo4j)</h3>
+            <p>
+              I migrated relationships (Followers/Following) to Neo4j. This
+              allows for complex queries like "Show me posts liked by people I
+              follow" in <strong>O(1)</strong> time complexity, compared to O(N)
+              in relational databases.
+            </p>
+          </div>
+          <div class="detail-card">
+            <h3>⚡ Redis "Fan-Out"</h3>
+            <p>
+              For celebrity accounts (1M+ followers), we use a "Pull" model. For
+              normal users, we use a "Push" model: when a user posts, their ID
+              is pushed to their followers' pre-computed Redis lists.
+            </p>
+          </div>
+        </div>
+
+        <div class="code-container">
+          <div class="code-header">
+            <span class="code-lang">FEED_SERVICE.PY</span>
+          </div>
+          <div class="code-content">
+            <span class="com"># Hybrid Feed Generation</span>
+            <span class="kwd">def</span>
+            <span class="fn">get_feed</span>(user_id):
+            <span class="com"># 1. Try Cache</span>
+            cached_feed = redis.lrange(<span class="str">f"feed:{user_id}"</span
+            >, 0, 10) <span class="kwd">if</span> cached_feed:
+            <span class="kwd">return</span> deserialize(cached_feed)
+
+            <span class="com"># 2. Fallback to Graph Query</span>
+            query =
+            <span class="str"
+              >""" MATCH (u:User {id: $id})-[:FOLLOWS]->(f)-[:POSTED]->(p)
+              RETURN p ORDER BY p.created_at DESC LIMIT 10 """</span
+            >
+            results = neo4j.run(query, id=user_id)
+
+            <span class="kwd">return</span> results
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="media" class="deep-dive-section reveal-text">
+      <div class="dd-header">
+        <div>
+          <span class="dd-label">03 / CONTENT DELIVERY</span>
+          <h2 class="dd-title">Video & Image<br />Processing</h2>
+        </div>
+        <p class="dd-desc">
+          Users upload raw, unoptimized 4K files. The system must convert these
+          into web-ready formats instantly using Serverless functions.
+        </p>
+      </div>
+
+      <div class="tech-detail-grid">
+        <div class="details">
+          <div class="detail-card">
+            <h3>🖼️ Sharp Image Optimization</h3>
+            <p>
+              An AWS Lambda function triggers on S3 upload. It uses
+              <strong>Sharp.js</strong> to resize images into 3 sizes
+              (Thumbnail, Mobile, Desktop) and converts them to
+              <strong>WebP</strong> format, reducing file size by ~40% vs JPEG.
+            </p>
+          </div>
+          <div class="detail-card">
+            <h3>🎥 HLS Video Streaming</h3>
+            <p>
+              For Reels, raw video is transcoded using <strong>FFmpeg</strong>
+              into HLS (HTTP Live Streaming) format. This splits the video into
+              small .ts chunks, allowing for adaptive bitrate streaming based on
+              internet speed.
+            </p>
+          </div>
+        </div>
+
+        <div class="code-container">
+          <div class="code-header">
+            <span class="code-lang">LAMBDA.JS</span>
+          </div>
+          <div class="code-content">
+            <span class="kwd">await</span> sharp(inputBuffer) .resize({ width:
+            <span class="fn">1080</span>, withoutEnlargement:
+            <span class="kwd">true</span> }) .webp({ quality:
+            <span class="fn">80</span> }) .toBuffer() .then(data =>
+            S3.putObject({ Bucket: <span class="str">'cdn-bucket'</span>, Key:
+            <span class="str">`optimized/${filename}.webp`</span>, Body: data
+            }));
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="chat" class="deep-dive-section alt reveal-text">
+      <div class="dd-header">
+        <div>
+          <span class="dd-label">04 / REAL-TIME</span>
+          <h2 class="dd-title">WebSocket<br />Architecture</h2>
+        </div>
+        <p class="dd-desc">
+          Direct Messaging needs to feel instant. HTTP polling is too slow. I
+          built a custom WebSocket mesh to handle millions of concurrent
+          connections.
+        </p>
+      </div>
+
+      <div class="tech-detail-grid">
+        <div class="details">
+          <div class="detail-card">
+            <h3>🔌 Socket.io + Redis Adapter</h3>
+            <p>
+              Node.js is single-threaded. To scale Chat across multiple server
+              cores, I used the <strong>Redis Adapter</strong>. This allows a
+              user connected to Server A to send a message to a user on Server
+              B.
+            </p>
+          </div>
+          <div class="detail-card">
+            <h3>🚀 Optimistic UI</h3>
+            <p>
+              When you hit send, the message appears immediately in the UI with
+              a "sending" state. It doesn't wait for the server ack. This
+              creates a perceived latency of 0ms.
+            </p>
+          </div>
+        </div>
+
+        <div class="code-container">
+          <div class="code-header">
+            <span class="code-lang">SOCKET_SERVER.JS</span>
+          </div>
+          <div class="code-content">
+            io.on(<span class="str">'connection'</span>, (socket) => {
+            <span class="com">// Join user to their own private room</span>
+            socket.join(socket.userId); socket.on(<span class="str"
+              >'private_message'</span
+            >, ({ content, to }) => {
+            <span class="com">// Broadcast to specific user room</span>
+            socket.to(to).emit(<span class="str">'private_message'</span>, {
+            content, from: socket.userId, });
+
+            <span class="com">// Async DB Persist</span>
+            MessageModel.create({ ... }); }); });
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="stories" class="deep-dive-section reveal-text">
+      <div class="dd-header">
+        <div>
+          <span class="dd-label">05 / EPHEMERAL CONTENT</span>
+          <h2 class="dd-title">Stories &<br />TTL Data</h2>
+        </div>
+        <p class="dd-desc">
+          Handling data that disappears is tricky. You don't want to run a CRON
+          job every minute to check for expired stories—that's inefficient.
+        </p>
+      </div>
+
+      <div class="tech-detail-grid">
+        <div class="details">
+          <div class="detail-card">
+            <h3>⏳ MongoDB TTL Indexes</h3>
+            <p>
+              I utilized MongoDB's "Time To Live" (TTL) feature. By setting an
+              <code>expireAfterSeconds</code> index on the
+              <code>createdAt</code> field, the database engine automatically
+              removes the document exactly 24 hours after creation.
+            </p>
+          </div>
+          <div class="detail-card">
+            <h3>🎨 Canvas Rendering</h3>
+            <p>
+              To support text overlays, stickers, and filters on stories, I used
+              the HTML5 Canvas API. The final composition is rendered as a flat
+              image/video on the client side before upload.
+            </p>
+          </div>
+        </div>
+
+        <div class="code-container">
+          <div class="code-header">
+            <span class="code-lang">SCHEMA.JS</span>
+          </div>
+          <div class="code-content">
+            <span class="kwd">const</span> StorySchema =
+            <span class="kwd">new</span> Schema({ author: ObjectId, mediaUrl:
+            String, createdAt: { type: Date, <span class="kwd">default</span>:
+            Date.now, expires: <span class="fn">86400</span>
+            <span class="com">// 24 Hours</span>
+            } });
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="search" class="deep-dive-section alt reveal-text">
+      <div class="dd-header">
+        <div>
+          <span class="dd-label">06 / DISCOVERY</span>
+          <h2 class="dd-title">ElasticSearch<br />Indexing</h2>
+        </div>
+        <p class="dd-desc">
+          Finding "john" among 100 million users requires a dedicated search
+          engine. SQL <code>LIKE %john%</code> queries are too slow.
+        </p>
+      </div>
+
+      <div class="tech-detail-grid">
+        <div class="details">
+          <div class="detail-card">
+            <h3>🔍 Fuzzy Matching</h3>
+            <p>
+              Data is synced from MongoDB to an
+              <strong>ElasticSearch</strong> cluster. This allows for fuzzy
+              matching (handling typos), autocomplete, and relevance scoring
+              based on follower count.
+            </p>
+          </div>
+        </div>
+
+        <div class="code-container">
+          <div class="code-header">
+            <span class="code-lang">ELASTIC_QUERY.JSON</span>
+          </div>
+          <div class="code-content">
+            {
+            <span class="str">"query"</span>: {
+            <span class="str">"multi_match"</span>: {
+            <span class="str">"query"</span>: <span class="str">"swayam"</span>,
+            <span class="str">"fields"</span>: [<span class="str"
+              >"username^3"</span
+            >, <span class="str">"fullName"</span>],
+            <span class="str">"fuzziness"</span>:
+            <span class="str">"AUTO"</span>
+            } } }
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="deployment" class="deep-dive-section reveal-text">
+      <div class="dd-header">
+        <div>
+          <span class="dd-label">07 / INFRASTRUCTURE</span>
+          <h2 class="dd-title">DevOps &<br />Scalability</h2>
+        </div>
+        <p class="dd-desc">
+          The application is containerized using Docker and orchestrated with
+          Kubernetes (K8s) for auto-scaling.
+        </p>
+      </div>
+
+      <div class="tech-detail-grid">
+        <div class="details">
+          <div class="detail-card">
+            <h3>🐳 Docker & K8s</h3>
+            <p>
+              Each microservice (Auth, Feed, Media) has its own Dockerfile.
+              Kubernetes Horizontal Pod Autoscalers (HPA) monitor CPU usage and
+              spin up new pods automatically during traffic spikes.
+            </p>
+          </div>
+          <div class="detail-card">
+            <h3>🔄 CI/CD Pipeline</h3>
+            <p>
+              GitHub Actions handles the pipeline. On push to
+              <code>main</code>, it runs Jest tests, builds the Docker images,
+              pushes them to AWS ECR, and triggers a rolling update on the EKS
+              cluster.
+            </p>
+          </div>
+        </div>
+
+        <div class="code-container">
+          <div class="code-header">
+            <span class="code-lang">K8S_DEPLOY.YAML</span>
+          </div>
+          <div class="code-content">
+            <span class="kwd">apiVersion</span>: apps/v1
+            <span class="kwd">kind</span>: Deployment
+            <span class="kwd">metadata</span>: <span class="kwd">name</span>:
+            instagram-api <span class="kwd">spec</span>:
+            <span class="kwd">replicas</span>: 3
+            <span class="kwd">template</span>:
+            <span class="kwd">containers</span>: -
+            <span class="kwd">name</span>: api <span class="kwd">image</span>:
+            sway/insta-api:latest <span class="kwd">resources</span>:
+            <span class="kwd">limits</span>: <span class="kwd">cpu</span>:
+            "500m" <span class="kwd">memory</span>: "512Mi"
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer id="contact">
+      <div class="footer-split">
+        <div class="footer-left">
+          <h2 class="footer-title">NEXT<br />PROJECT</h2>
+          <a
+            href="apple-music.html"
+            class="mouse-hover"
+            style="text-decoration: underline; color: #888; font-size: 1.5rem"
+            >Apple Music &rarr;</a
+          >
+        </div>
+        <div class="footer-right">
+          <p style="color: #666">&copy; 2026 Swayam.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"
+      defer
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"
+      defer
+    ></script>
+
+    <script defer>
+      // 1. Disable Right Click
+      document.addEventListener("contextmenu", (event) =>
+        event.preventDefault(),
+      );
+
+      // 2. Disable Keyboard Shortcuts (F12, etc)
+      document.onkeydown = function (e) {
+        if (event.keyCode == 123) return false;
+        if (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 67 || e.keyCode == 74)) return false;
+        if (e.ctrlKey && e.keyCode == 85) return false;
+      };
+
+      document.addEventListener("DOMContentLoaded", (event) => {
+        gsap.registerPlugin(ScrollTrigger);
+
+        // 3. SMART NAV LOGIC
+        const nav = document.querySelector('nav');
+        if(nav) {
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+            });
+        }
+
+        // 4. STICKY TOC HIGHLIGHTING
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              const id = entry.target.getAttribute("id");
+              const link = document.querySelector(`.toc-link[href="#${id}"]`);
+              if (entry.isIntersecting && link) {
+                document
+                  .querySelectorAll(".toc-link")
+                  .forEach((l) => l.classList.remove("active"));
+                link.classList.add("active");
+              }
+            });
+          },
+          { threshold: 0.3 },
+        );
+
+        document.querySelectorAll("section").forEach((section) => {
+          observer.observe(section);
+        });
+
+        // 5. REVEAL ANIMATIONS
+        gsap.from(".cs-title", {
+          y: 50,
+          opacity: 0,
+          duration: 1,
+          ease: "power3.out",
+          delay: 0.2,
+        });
+
+        gsap.utils.toArray(".reveal-text").forEach((section) => {
+          gsap.from(section, {
+            scrollTrigger: { trigger: section, start: "top 85%" },
+            y: 30,
+            opacity: 0,
+            duration: 0.8,
+            ease: "power3.out",
+          });
+        });
+
+        gsap.utils.toArray(".reveal-img").forEach((section) => {
+          gsap.from(section, {
+            scrollTrigger: { trigger: section, start: "top 80%" },
+            scale: 0.95,
+            opacity: 0,
+            duration: 1,
+            ease: "power3.out",
+          });
+        });
+        
+        // 6. MAGNETIC BUTTON EFFECT (ADDED)
+        const magnets = document.querySelectorAll(
+            ".nav-item, .submit-btn, .footer-link, .btn, .socials a, .cv-btn, .toc-link"
+        );
+
+        magnets.forEach((magnet) => {
+            magnet.addEventListener("mousemove", (e) => {
+            const bounding = magnet.getBoundingClientRect();
+            const magnetsStrength = 40;
+            const newX = (e.clientX - bounding.left) / magnet.offsetWidth - 0.5;
+            const newY = (e.clientY - bounding.top) / magnet.offsetHeight - 0.5;
+
+            gsap.to(magnet, {
+                duration: 1,
+                x: newX * magnetsStrength,
+                y: newY * magnetsStrength,
+                ease: "power4.out",
+            });
+            });
+
+            magnet.addEventListener("mouseleave", () => {
+            gsap.to(magnet, {
+                duration: 1,
+                x: 0,
+                y: 0,
+                ease: "elastic.out(1, 0.3)",
+            });
+            });
+        });
+      });
+    </script>
+  </body>
+</html>
