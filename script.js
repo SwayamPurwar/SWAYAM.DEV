@@ -330,3 +330,65 @@ if (window.matchMedia("(max-width: 768px)").matches) {
 
     projects.forEach(p => observer.observe(p));
 }
+
+
+// 12. PROJECT PREVIEW REVEAL
+const previewEl = document.getElementById('preview-img');
+const projectLinks = document.querySelectorAll('.project-link');
+
+if (previewEl && projectLinks.length > 0) {
+    projectLinks.forEach(link => {
+        link.addEventListener('mouseenter', () => {
+            const imgUrl = link.getAttribute('data-img');
+            if (imgUrl) {
+                previewEl.style.backgroundImage = `url('${imgUrl}')`;
+                
+                gsap.to(previewEl, { 
+                    opacity: 1, 
+                    scale: 1, 
+                    duration: 0.4, 
+                    ease: "power2.out" 
+                });
+            }
+        });
+
+        link.addEventListener('mouseleave', () => {
+            gsap.to(previewEl, { 
+                opacity: 0, 
+                scale: 0.8, 
+                duration: 0.3, 
+                ease: "power2.in" 
+            });
+        });
+
+        link.addEventListener('mousemove', (e) => {
+            // Optional: Move image slightly with cursor
+            const x = (e.clientX - window.innerWidth / 2) * 0.15;
+            const y = (e.clientY - window.innerHeight / 2) * 0.15;
+            
+            gsap.to(previewEl, { 
+                x: x, 
+                y: y, 
+                duration: 0.5, 
+                ease: "power1.out" 
+            });
+        });
+    });
+}
+
+// 13. DYNAMIC YEAR
+const yearSpan = document.getElementById("year");
+if (yearSpan) {
+    yearSpan.textContent = new Date().getFullYear();
+}
+
+// ACCESSIBILITY: Detect Keyboard vs Mouse
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Tab') {
+        document.body.classList.add('user-is-tabbing');
+    }
+});
+
+window.addEventListener('mousemove', () => {
+    document.body.classList.remove('user-is-tabbing');
+});

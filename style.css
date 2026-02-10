@@ -759,3 +759,55 @@ input:focus, textarea:focus { border-bottom-color: var(--accent); }
     
     .section-header.upcoming { margin-top: 6rem; }
 }
+
+/* --- PROJECT PREVIEW HOVER --- */
+.project-preview-img {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    width: 400px; /* Adjust size as needed */
+    height: 300px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 11; /* Behind the text (which is usually z-index 10) */
+    pointer-events: none;
+    opacity: 0;
+    border-radius: 12px;
+    filter: brightness(0.8);
+    will-change: transform, opacity;
+}
+
+/* Ensure text stays on top */
+.project {
+    position: relative;
+    z-index: 10;
+    background: transparent; /* Ensure we can see through it */
+}
+
+/* Clean up mobile view */
+@media (max-width: 768px) {
+    .project-preview-img { display: none !important; }
+}
+
+
+
+/* --- ACCESSIBILITY FAIL-SAFE --- */
+/* This ensures keyboard users can see where they are */
+*:focus-visible {
+    outline: 2px solid var(--accent); /* Uses your purple accent color */
+    outline-offset: 4px;
+    cursor: auto !important; /* Temporarily brings back the normal cursor */
+}
+
+/* Optional: Make links glow when focused via keyboard */
+a:focus-visible {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+/* Hide the custom circle cursor when using keyboard to prevent distraction */
+body.user-is-tabbing #cursor {
+    opacity: 0;
+}
