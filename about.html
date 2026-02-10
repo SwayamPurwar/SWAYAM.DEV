@@ -377,6 +377,17 @@
               { rotateY: 90, opacity: 0 },
               { scrollTrigger: { trigger: ".bio-section", start: "top 70%" }, rotateY: 5, opacity: 1, duration: 1.5, ease: "power3.out" }
           );
+          // NEW: Animate Image from B&W to Color automatically
+          gsap.to(".bio-img", {
+              scrollTrigger: { 
+                  trigger: ".bio-section", 
+                  start: "top 70%" 
+              },
+              filter: "grayscale(0%) contrast(1)", // Smoothly remove grayscale
+              duration: 2.5,                       // Slow, cinematic fade (2.5s)
+              ease: "power2.out",
+              delay: 0.5                           // Wait 0.5s after card appears
+          });
 
           // 3. Info Grid & Pills (Explicitly animate from hidden)
           gsap.set(".info-grid", { opacity: 0, y: 30 });
