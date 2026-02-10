@@ -253,3 +253,49 @@ if (menuToggle) {
         });
     });
 }
+
+/* --- ROBUST MOBILE MENU LOGIC --- */
+document.addEventListener("DOMContentLoaded", () => {
+    const menuToggle = document.querySelector(".menu-toggle");
+    const mobileMenu = document.querySelector(".mobile-menu");
+    const mobileLinks = document.querySelectorAll(".mobile-link");
+    
+    // 1. Toggle Menu Open/Close
+    if (menuToggle && mobileMenu) {
+        menuToggle.addEventListener("click", (e) => {
+            e.stopPropagation(); // Prevent immediate closing
+            menuToggle.classList.toggle("active");
+            mobileMenu.classList.toggle("active");
+            
+            // Optional: Lock body scroll when menu is open
+            if (mobileMenu.classList.contains("active")) {
+                document.body.style.overflow = "hidden";
+            } else {
+                document.body.style.overflow = "";
+            }
+        });
+    }
+
+    // 2. Close Menu When a Link is Clicked
+    mobileLinks.forEach(link => {
+        link.addEventListener("click", () => {
+            console.log("Link clicked: closing menu"); // Debug check
+            menuToggle.classList.remove("active");
+            mobileMenu.classList.remove("active");
+            document.body.style.overflow = ""; // Restore scrolling
+        });
+    });
+
+    // 3. Close Menu When Clicking Outside (Optional safety)
+    document.addEventListener("click", (e) => {
+        if (isMenuOpen() && !mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+            menuToggle.classList.remove("active");
+            mobileMenu.classList.remove("active");
+            document.body.style.overflow = "";
+        }
+    });
+
+    function isMenuOpen() {
+        return mobileMenu && mobileMenu.classList.contains("active");
+    }
+});

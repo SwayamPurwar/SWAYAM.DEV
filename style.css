@@ -866,3 +866,21 @@ input:focus, textarea:focus { border-bottom-color: var(--accent); }
         margin: 0 auto 2rem auto; /* Center it */
     }
 }
+/* --- MOBILE MENU CLICK FIX --- */
+.mobile-menu {
+    pointer-events: none; /* unexpected clicks pass through when hidden */
+    transition: opacity 0.3s ease, visibility 0.3s;
+    visibility: hidden;
+}
+
+.mobile-menu.active {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important; /* ENABLE CLICKS */
+}
+
+.mobile-link {
+    cursor: pointer;
+    position: relative;
+    z-index: 100000; /* Ensure links are on top */
+}

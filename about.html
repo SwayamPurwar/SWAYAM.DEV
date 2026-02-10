@@ -210,6 +210,35 @@
         nav, nav.scrolled { padding: 1.5rem 2rem !important; }
         .info-grid { grid-template-columns: 1fr; gap: 2rem; }
       }
+      /* --- MOBILE VISIBILITY FIX (Add to about.html style) --- */
+
+@media (max-width: 768px) {
+  /* Force Title Visibility */
+  .a-title {
+    font-size: 3rem !important; /* Smaller, readable size */
+    color: #ffffff !important;  /* Solid White */
+    mix-blend-mode: normal !important; /* Disable fancy blending */
+    opacity: 1 !important;
+    text-shadow: 0 0 10px rgba(0,0,0,0.5); /* Add shadow for contrast */
+    margin-top: 100px; /* Push down from top */
+  }
+
+  /* Force Subtitle Visibility */
+  .a-subtitle {
+    font-size: 1rem !important;
+    color: #cccccc !important; /* Light Grey */
+    opacity: 1 !important;
+    max-width: 100%;
+    margin-top: 1rem;
+    border-left: 2px solid #00d2ff; /* Blue accent line */
+  }
+
+  /* Fix the Hero spacing */
+  .a-hero {
+    padding: 120px 20px 50px !important;
+    justify-content: flex-start; /* Align to top */
+  }
+}
     </style>
   </head>
   <body>
