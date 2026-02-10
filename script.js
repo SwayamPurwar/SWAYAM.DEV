@@ -239,7 +239,8 @@ if (menuToggle) {
             
             menuToggle.classList.add("active");
             mobileMenu.classList.add("active"); // <--- THIS WAS MISSING
-            
+            document.body.style.overflow = "hidden"; // FREEZE BACKGROUND
+        
             isMenuOpen = true;
         } else {
             // CLOSE
@@ -247,7 +248,7 @@ if (menuToggle) {
             
             menuToggle.classList.remove("active");
             mobileMenu.classList.remove("active"); // <--- THIS WAS MISSING
-            
+            document.body.style.overflow = ""; // UNFREEZE
             isMenuOpen = false;
         }
     });
@@ -259,7 +260,7 @@ if (menuToggle) {
             
             menuToggle.classList.remove("active");
             mobileMenu.classList.remove("active"); // <--- THIS WAS MISSING
-            
+            document.body.style.overflow = ""; // UNFREEZE
             isMenuOpen = false;
         });
     });
@@ -518,3 +519,15 @@ if (canvas && ctx) {
         }
     });
 }
+
+// --- TAB TITLE ANIMATION ---
+const originalTitle = document.title;
+const blurTitle = "System Offline // Come Back"; // The message when they leave
+
+window.addEventListener("blur", () => {
+    document.title = blurTitle;
+});
+
+window.addEventListener("focus", () => {
+    document.title = originalTitle;
+}); 
