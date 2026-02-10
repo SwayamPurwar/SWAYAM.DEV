@@ -283,6 +283,7 @@ nav.scrolled {
 .menu-toggle:hover .bar:nth-child(2) { width: 32px; }
 
 .menu-toggle.active { align-items: center; }
+
 .menu-toggle.active .bar:nth-child(1) {
     transform: translateY(5px) rotate(45deg);
     width: 32px;
@@ -1028,4 +1029,35 @@ main, nav, footer {
     transform: translateZ(20px); /* Pushes text 20px towards the user */
     position: relative;
     z-index: 5;
+}
+/* --- FINAL FIX: MOBILE MENU & BUTTON VISIBILITY --- */
+
+/* 1. DESKTOP: Force hidden */
+.menu-toggle {
+    display: none !important;
+}
+
+/* 2. MOBILE: Show button and force "X" visibility */
+@media (max-width: 768px) {
+    
+    /* Make the button visible ONLY on mobile */
+    .menu-toggle {
+        display: flex !important;
+        z-index: 20001 !important; /* Sit on top of everything */
+        position: relative;
+    }
+
+    /* Force the "X" bars to be white */
+    .menu-toggle.active .bar {
+        background-color: #ffffff !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    /* Bring the Nav container above the black menu overlay */
+    nav {
+        z-index: 20000 !important;
+        mix-blend-mode: normal !important; /* Fixes "disappearing" issue */
+        transform: none !important; /* Removes layering traps */
+    }
 }

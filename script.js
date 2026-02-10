@@ -252,6 +252,8 @@ if (menuToggle) {
             isMenuOpen = false;
         }
     });
+
+    
     
     // Close Menu when a link is clicked
     mobileLinks.forEach(link => {
