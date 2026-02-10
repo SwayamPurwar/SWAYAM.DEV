@@ -4,153 +4,275 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 // SYSTEM FAILURE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
     <style>
+    :root {
+        --bg: #050505;
+        --accent: #bfa5d8; /* Your Purple */
+        --error: #ff3333;   /* Red */
+        --scanline: rgba(0, 0, 0, 0.5);
+    }
+
     body {
-        background-color: #050505;
-        color: #bfa5d8;
+        background-color: var(--bg);
+        color: var(--accent);
         font-family: 'Fira Code', monospace;
         height: 100vh;
+        margin: 0;
+        overflow: hidden;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        overflow: hidden;
         text-align: center;
-        margin: 0;
-        /* Add a slight shake to the whole page */
-        animation: body-shake 2s infinite;
+        position: relative;
     }
 
-    /* --- AGGRESSIVE GLITCH TEXT --- */
-    .glitch-wrapper {
+    /* --- 1. CRT SCREEN EFFECTS --- */
+    .crt-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: 
+            /* Scanlines */
+            linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+            /* RGB Split */
+            linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+        background-size: 100% 2px, 3px 100%;
+        z-index: 10;
+        pointer-events: none;
+    }
+
+    /* Vignette (Dark Corners) */
+    .vignette {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,0.8) 100%);
+        z-index: 11;
+        pointer-events: none;
+    }
+
+    /* Background Noise */
+    .noise-bg {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        opacity: 0.05;
+        z-index: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    }
+
+    /* --- 2. GLITCH TYPOGRAPHY --- */
+    .content-wrapper {
+        z-index: 5;
         position: relative;
-        /* Main text jerk */
-        animation: text-jerk 0.8s infinite linear alternate-reverse;
+        padding: 2rem;
+        border: 1px solid rgba(255, 51, 51, 0.1);
+        background: rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(2px);
     }
 
     .glitch {
-        font-size: clamp(3rem, 10vw, 8rem);
-        font-weight: 700;
+        font-family: 'Syne', sans-serif; /* Matches your brand */
+        font-size: clamp(3rem, 10vw, 9rem);
+        font-weight: 800;
         text-transform: uppercase;
         position: relative;
         color: #fff;
-        letter-spacing: -0.05em;
+        line-height: 0.9;
+        margin: 0;
+        text-shadow: 2px 2px 0px var(--error);
+        animation: shake 3s infinite;
     }
 
-    /* Base styles for all glitch layers */
-    .glitch::before,
-    .glitch::after {
+    .glitch::before, .glitch::after {
         content: attr(data-text);
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: #050505;
-        opacity: 0.8;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: var(--bg);
     }
 
-    /* Layer 1: Purple/Cyan Offset */
     .glitch::before {
-        left: 4px;
-        text-shadow: -3px 0 #bfa5d8, 3px 0 #00ffff;
-        clip: rect(24px, 550px, 90px, 0);
-        /* Faster animation speed */
-        animation: glitch-anim-aggressive-1 0.6s infinite linear alternate-reverse;
+        left: 3px;
+        text-shadow: -2px 0 var(--error);
+        clip-path: inset(0 0 0 0);
+        animation: glitch-anim-1 2s infinite linear alternate-reverse;
     }
 
-    /* Layer 2: Red/Green Offset */
     .glitch::after {
-        left: -4px;
-        text-shadow: -3px 0 #ff0055, 3px 0 #00ff55;
-        clip: rect(85px, 550px, 140px, 0);
-        /* Slightly different speed for chaos */
-        animation: glitch-anim-aggressive-2 0.5s infinite linear alternate-reverse;
+        left: -3px;
+        text-shadow: -2px 0 var(--accent);
+        clip-path: inset(0 0 0 0);
+        animation: glitch-anim-2 2.5s infinite linear alternate-reverse;
     }
 
-    /* --- OTHER ELEMENTS --- */
-    .error-code {
-        color: #ff3333; /* Red for danger */
+    .sub-glitch {
+        font-size: 1.2rem;
+        color: var(--error);
+        letter-spacing: 0.5rem;
         margin-top: 1rem;
-        letter-spacing: 0.2em;
-        font-weight: bold;
+        font-weight: 700;
     }
 
-    .redirect-msg {
+    /* --- 3. TERMINAL LOGS --- */
+    .terminal-container {
         margin-top: 3rem;
+        text-align: left;
         font-size: 0.9rem;
         color: #888;
+        width: 300px;
+        height: 120px;
+        overflow: hidden;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        padding-top: 1rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
     }
 
-    #timer { color: #fff; font-weight: bold; }
-
-    /* --- KEYFRAMES --- */
-    /* More random clip properties and faster movement */
-    @keyframes glitch-anim-aggressive-1 {
-        0% { clip: rect(10px, 9999px, 30px, 0); transform: skew(0.5deg); }
-        20% { clip: rect(50px, 9999px, 60px, 0); transform: skew(-0.5deg); }
-        40% { clip: rect(80px, 9999px, 20px, 0); transform: skew(0.2deg); }
-        60% { clip: rect(20px, 9999px, 90px, 0); transform: skew(0); }
-        80% { clip: rect(90px, 9999px, 10px, 0); transform: skew(-0.2deg); }
-        100% { clip: rect(30px, 9999px, 50px, 0); transform: skew(0.5deg); }
-    }
-
-    @keyframes glitch-anim-aggressive-2 {
-        0% { clip: rect(90px, 9999px, 10px, 0); top: -2px; }
-        20% { clip: rect(10px, 9999px, 50px, 0); top: 2px; }
-        40% { clip: rect(50px, 9999px, 20px, 0); top: -1px; }
-        60% { clip: rect(20px, 9999px, 90px, 0); top: 0; }
-        80% { clip: rect(80px, 9999px, 60px, 0); top: 1px; }
-        100% { clip: rect(30px, 9999px, 80px, 0); top: -2px; }
-    }
-
-    /* Jerk the whole text block left/right */
-    @keyframes text-jerk {
-        0% { transform: translateX(0); }
-        10% { transform: translateX(-3px); }
-        20% { transform: translateX(3px); }
-        30% { transform: translateX(-2px); }
-        90% { transform: translateX(1px); }
-        100% { transform: translateX(0); }
+    .log-line {
+        margin: 2px 0;
+        opacity: 0;
+        animation: fadeIn 0.1s forwards;
     }
     
-    /* Subtle background shake */
-    @keyframes body-shake {
-        0% { transform: translate(0,0) }
-        2% { transform: translate(-1px, 1px) }
-        4% { transform: translate(1px, -1px) }
-        6% { transform: translate(0,0) }
-        100% { transform: translate(0,0) }
+    .log-success { color: var(--accent); }
+    .log-error { color: var(--error); }
+
+    /* --- 4. PROGRESS BAR --- */
+    .progress-bar {
+        width: 300px;
+        height: 4px;
+        background: rgba(255,255,255,0.1);
+        margin-top: 1rem;
+        position: relative;
     }
-</style>
+
+    .progress-fill {
+        height: 100%;
+        background: var(--error);
+        width: 0%;
+        transition: width 0.2s linear;
+        box-shadow: 0 0 10px var(--error);
+    }
+
+    /* --- 5. BUTTON --- */
+    .manual-btn {
+        margin-top: 2rem;
+        background: transparent;
+        border: 1px solid rgba(255,255,255,0.2);
+        color: white;
+        padding: 1rem 2rem;
+        font-family: 'Fira Code', monospace;
+        cursor: pointer;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 2px;
+        transition: 0.3s;
+        text-decoration: none;
+    }
+
+    .manual-btn:hover {
+        background: white;
+        color: black;
+        box-shadow: 0 0 20px rgba(255,255,255,0.5);
+    }
+
+    /* --- ANIMATIONS --- */
+    @keyframes glitch-anim-1 {
+        0% { clip-path: inset(20% 0 80% 0); transform: translate(-2px,0); }
+        20% { clip-path: inset(60% 0 10% 0); transform: translate(2px,0); }
+        40% { clip-path: inset(40% 0 50% 0); transform: translate(-2px,0); }
+        60% { clip-path: inset(80% 0 5% 0); transform: translate(2px,0); }
+        100% { clip-path: inset(10% 0 60% 0); transform: translate(-2px,0); }
+    }
+
+    @keyframes glitch-anim-2 {
+        0% { clip-path: inset(10% 0 60% 0); transform: translate(2px,0); }
+        20% { clip-path: inset(80% 0 5% 0); transform: translate(-2px,0); }
+        40% { clip-path: inset(40% 0 50% 0); transform: translate(2px,0); }
+        60% { clip-path: inset(5% 0 80% 0); transform: translate(-2px,0); }
+        100% { clip-path: inset(70% 0 20% 0); transform: translate(2px,0); }
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translate(0,0); }
+        5% { transform: translate(-1px, -1px); }
+        10% { transform: translate(1px, 1px); }
+    }
+
+    @keyframes fadeIn { to { opacity: 1; } }
+    </style>
 </head>
 <body>
 
-    <div class="glitch-wrapper">
-        <h1 class="glitch" data-text="SYSTEM FAILURE">SYSTEM FAILURE</h1>
-    </div>
-    
-    <div class="error-code">ERROR 404 // DATA_CORRUPTED</div>
 
-    <p class="redirect-msg">
-        REROUTING TO SECURE SERVER IN <span id="timer">05</span>
-    </p>
+    <div class="crt-overlay"></div>
+    <div class="vignette"></div>
+    <div class="noise-bg"></div>
+
+    <div class="content-wrapper">
+        <h1 class="glitch" data-text="SYSTEM FAILURE">SYSTEM FAILURE</h1>
+        <div class="sub-glitch">ERROR 404 // DATA_CORRUPTED</div>
+
+        <div class="terminal-container" id="console">
+            </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+
+        <a href="index.html" class="manual-btn">[ MANUAL_OVERRIDE ]</a>
+    </div>
 
     <script>
-        // AUTO REDIRECT SCRIPT
-        let timeLeft = 5;
-        const timerEl = document.getElementById('timer');
+        // --- CONFIGURATION ---
+        const totalTime = 5000; // 5 seconds
+        const redirectUrl = 'index.html';
         
-        const countdown = setInterval(() => {
-            timeLeft--;
-            timerEl.textContent = "0" + timeLeft;
+        // --- ELEMENTS ---
+        const consoleEl = document.getElementById('console');
+        const progressEl = document.getElementById('progress');
+        
+        // --- FAKE LOGS ---
+        const logs = [
+            { text: "> SYSTEM_CHECK: FAILED", delay: 500, type: "log-error" },
+            { text: "> ATTEMPTING_RESTORE...", delay: 1200, type: "" },
+            { text: "> SECTOR_7G: UNSTABLE", delay: 2000, type: "log-error" },
+            { text: "> REROUTING_TRAFFIC...", delay: 3000, type: "log-success" },
+            { text: "> ESTABLISHING_UPLINK...", delay: 4000, type: "log-success" },
+            { text: "> REBOOT_INITIATED.", delay: 4800, type: "log-success" }
+        ];
+
+        // --- PROGRESS BAR LOGIC ---
+        let startTime = Date.now();
+        
+        function updateProgress() {
+            let elapsed = Date.now() - startTime;
+            let percent = (elapsed / totalTime) * 100;
             
-            if(timeLeft <= 0) {
-                clearInterval(countdown);
-                window.location.href = 'index.html';
+            if (percent >= 100) {
+                percent = 100;
+                window.location.href = redirectUrl;
+            } else {
+                requestAnimationFrame(updateProgress);
             }
-        }, 1000);
+            
+            progressEl.style.width = percent + "%";
+        }
+
+        // --- LOG TYPING LOGIC ---
+        logs.forEach(log => {
+            setTimeout(() => {
+                const p = document.createElement('div');
+                p.className = `log-line ${log.type}`;
+                p.textContent = log.text;
+                consoleEl.appendChild(p);
+                // Keep scrolled to bottom
+                consoleEl.scrollTop = consoleEl.scrollHeight;
+            }, log.delay);
+        });
+
+        // Start
+        updateProgress();
     </script>
 
 </body>
