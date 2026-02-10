@@ -1,170 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>404 | System Failure</title>
-    
-    <meta name="robots" content="noindex, follow">
-    
-    <link rel="icon" type="image/webp" href="favicon.webp" />
-    <link rel="stylesheet" href="style.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:wght@300;400;600&family=Fira+Code:wght@400&display=swap" rel="stylesheet" />
-    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 // SYSTEM FAILURE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
     <style>
-      body {
+    body {
+        background-color: #050505;
+        color: #bfa5d8;
+        font-family: 'Fira Code', monospace;
         height: 100vh;
-        width: 100vw;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        text-align: center;
         overflow: hidden;
-        background-color: #050505;
-        color: #f0f0f0;
-      }
+        text-align: center;
+        margin: 0;
+        /* Add a slight shake to the whole page */
+        animation: body-shake 2s infinite;
+    }
 
-      /* 1. TECH GRID BACKGROUND */
-      .grid-bg {
-        position: fixed;
+    /* --- AGGRESSIVE GLITCH TEXT --- */
+    .glitch-wrapper {
+        position: relative;
+        /* Main text jerk */
+        animation: text-jerk 0.8s infinite linear alternate-reverse;
+    }
+
+    .glitch {
+        font-size: clamp(3rem, 10vw, 8rem);
+        font-weight: 700;
+        text-transform: uppercase;
+        position: relative;
+        color: #fff;
+        letter-spacing: -0.05em;
+    }
+
+    /* Base styles for all glitch layers */
+    .glitch::before,
+    .glitch::after {
+        content: attr(data-text);
+        position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                          linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-        background-size: 40px 40px;
-        z-index: -2;
-        pointer-events: none;
-      }
+        background: #050505;
+        opacity: 0.8;
+    }
 
-      /* 2. RED WARNING ORB */
-      .orb {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 60vw;
-        height: 60vw;
-        background: radial-gradient(circle, rgba(255, 59, 48, 0.15) 0%, rgba(0,0,0,0) 70%);
-        filter: blur(80px);
-        z-index: -1;
-        pointer-events: none;
-        animation: pulse 2s infinite alternate;
-      }
-      
-      @keyframes pulse {
-          0% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.9); }
-          100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
-      }
+    /* Layer 1: Purple/Cyan Offset */
+    .glitch::before {
+        left: 4px;
+        text-shadow: -3px 0 #bfa5d8, 3px 0 #00ffff;
+        clip: rect(24px, 550px, 90px, 0);
+        /* Faster animation speed */
+        animation: glitch-anim-aggressive-1 0.6s infinite linear alternate-reverse;
+    }
 
-      .content-wrapper {
-        position: relative;
-        z-index: 10;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-        padding: 0 20px;
-      }
+    /* Layer 2: Red/Green Offset */
+    .glitch::after {
+        left: -4px;
+        text-shadow: -3px 0 #ff0055, 3px 0 #00ff55;
+        clip: rect(85px, 550px, 140px, 0);
+        /* Slightly different speed for chaos */
+        animation: glitch-anim-aggressive-2 0.5s infinite linear alternate-reverse;
+    }
 
-      .error-code {
-        font-family: "Syne", sans-serif;
-        font-size: clamp(8rem, 25vw, 20rem);
-        line-height: 0.8;
-        font-weight: 800;
-        color: transparent;
-        -webkit-text-stroke: 2px rgba(255, 255, 255, 0.9);
-        margin: 0;
-        position: relative;
-      }
-      
-      .error-code::before {
-          content: "404";
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          color: rgba(255, 59, 48, 0.8);
-          -webkit-text-stroke: 0;
-          mix-blend-mode: overlay;
-          animation: glitch-anim 0.3s infinite;
-          opacity: 0.7;
-      }
+    /* --- OTHER ELEMENTS --- */
+    .error-code {
+        color: #ff3333; /* Red for danger */
+        margin-top: 1rem;
+        letter-spacing: 0.2em;
+        font-weight: bold;
+    }
 
-      @keyframes glitch-anim {
-        0% { transform: translate(0); }
-        20% { transform: translate(-3px, 3px); }
-        40% { transform: translate(-3px, -3px); }
-        60% { transform: translate(3px, 3px); }
-        80% { transform: translate(3px, -3px); }
-        100% { transform: translate(0); }
-      }
-
-      h2 {
-        font-family: 'Fira Code', monospace;
-        font-size: clamp(1rem, 2vw, 1.5rem);
-        color: #ff3b30;
-        margin-top: 1rem; 
-        margin-bottom: 2rem;
-        background: rgba(255, 59, 48, 0.1);
-        padding: 10px 20px;
-        border: 1px solid rgba(255, 59, 48, 0.3);
-        border-radius: 4px;
-      }
-
-      p {
+    .redirect-msg {
+        margin-top: 3rem;
+        font-size: 0.9rem;
         color: #888;
-        font-family: "Inter", sans-serif;
-        font-size: 1.1rem;
-        margin-bottom: 3rem;
-        max-width: 400px;
-        line-height: 1.6;
-      }
-      
-      .btn {
-          background: white;
-          color: black;
-          border-color: white;
-      }
-      .btn:hover {
-          background: transparent;
-          color: white;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="cursor" aria-hidden="true"></div>
+    }
+
+    #timer { color: #fff; font-weight: bold; }
+
+    /* --- KEYFRAMES --- */
+    /* More random clip properties and faster movement */
+    @keyframes glitch-anim-aggressive-1 {
+        0% { clip: rect(10px, 9999px, 30px, 0); transform: skew(0.5deg); }
+        20% { clip: rect(50px, 9999px, 60px, 0); transform: skew(-0.5deg); }
+        40% { clip: rect(80px, 9999px, 20px, 0); transform: skew(0.2deg); }
+        60% { clip: rect(20px, 9999px, 90px, 0); transform: skew(0); }
+        80% { clip: rect(90px, 9999px, 10px, 0); transform: skew(-0.2deg); }
+        100% { clip: rect(30px, 9999px, 50px, 0); transform: skew(0.5deg); }
+    }
+
+    @keyframes glitch-anim-aggressive-2 {
+        0% { clip: rect(90px, 9999px, 10px, 0); top: -2px; }
+        20% { clip: rect(10px, 9999px, 50px, 0); top: 2px; }
+        40% { clip: rect(50px, 9999px, 20px, 0); top: -1px; }
+        60% { clip: rect(20px, 9999px, 90px, 0); top: 0; }
+        80% { clip: rect(80px, 9999px, 60px, 0); top: 1px; }
+        100% { clip: rect(30px, 9999px, 80px, 0); top: -2px; }
+    }
+
+    /* Jerk the whole text block left/right */
+    @keyframes text-jerk {
+        0% { transform: translateX(0); }
+        10% { transform: translateX(-3px); }
+        20% { transform: translateX(3px); }
+        30% { transform: translateX(-2px); }
+        90% { transform: translateX(1px); }
+        100% { transform: translateX(0); }
+    }
     
-    <div class="grid-bg"></div>
-    <div class="orb"></div>
+    /* Subtle background shake */
+    @keyframes body-shake {
+        0% { transform: translate(0,0) }
+        2% { transform: translate(-1px, 1px) }
+        4% { transform: translate(1px, -1px) }
+        6% { transform: translate(0,0) }
+        100% { transform: translate(0,0) }
+    }
+</style>
+</head>
+<body>
 
-    <main class="content-wrapper">
-        <h1 class="error-code">404</h1>
-        <h2>ERR_PAGE_NOT_FOUND</h2>
-        <p>The coordinates you are trying to access do not exist in this sector.</p>
-
-        <div class="btn-wrapper">
-            <a href="index.html" class="btn mouse-hover">Return to Base</a>
-        </div>
-    </main>
-
-    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="script.js" defer></script>
+    <div class="glitch-wrapper">
+        <h1 class="glitch" data-text="SYSTEM FAILURE">SYSTEM FAILURE</h1>
+    </div>
     
+    <div class="error-code">ERROR 404 // DATA_CORRUPTED</div>
+
+    <p class="redirect-msg">
+        REROUTING TO SECURE SERVER IN <span id="timer">05</span>
+    </p>
+
     <script>
-      document.addEventListener("DOMContentLoaded", () => {
-          gsap.from(".content-wrapper > *", {
-              y: 30,
-              opacity: 0,
-              duration: 1,
-              stagger: 0.1,
-              ease: "power3.out"
-          });
-      });
+        // AUTO REDIRECT SCRIPT
+        let timeLeft = 5;
+        const timerEl = document.getElementById('timer');
+        
+        const countdown = setInterval(() => {
+            timeLeft--;
+            timerEl.textContent = "0" + timeLeft;
+            
+            if(timeLeft <= 0) {
+                clearInterval(countdown);
+                window.location.href = 'index.html';
+            }
+        }, 1000);
     </script>
-  </body>
+
+</body>
 </html>
