@@ -230,23 +230,36 @@ if (menuToggle) {
     const mobileLinks = document.querySelectorAll(".mobile-link");
     let isMenuOpen = false;
 
+    // Toggle Menu Open/Close
     menuToggle.addEventListener("click", () => {
         if (!isMenuOpen) {
+            // OPEN
             gsap.to(mobileMenu, { y: 0, autoAlpha: 1, duration: 0.6, ease: "power4.inOut" });
             gsap.fromTo(mobileLinks, { y: 50, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 0.5, delay: 0.2 });
+            
             menuToggle.classList.add("active");
+            mobileMenu.classList.add("active"); // <--- THIS WAS MISSING
+            
             isMenuOpen = true;
         } else {
+            // CLOSE
             gsap.to(mobileMenu, { y: "-100%", autoAlpha: 0, duration: 0.6 });
+            
             menuToggle.classList.remove("active");
+            mobileMenu.classList.remove("active"); // <--- THIS WAS MISSING
+            
             isMenuOpen = false;
         }
     });
     
+    // Close Menu when a link is clicked
     mobileLinks.forEach(link => {
         link.addEventListener("click", () => {
             gsap.to(mobileMenu, { y: "-100%", autoAlpha: 0, duration: 0.6 });
+            
             menuToggle.classList.remove("active");
+            mobileMenu.classList.remove("active"); // <--- THIS WAS MISSING
+            
             isMenuOpen = false;
         });
     });
