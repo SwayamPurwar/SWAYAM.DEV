@@ -100,12 +100,12 @@ if (preloader) {
             ease: "power4.out" 
         }, "-=0.8");
 
- // NEW FIXED CODE
-tl.fromTo(".hero-sub", 
-    { y: 30, opacity: 0 },      // Start State
-    { y: 0, opacity: 1, duration: 1, ease: "power3.out" }, // End State
-    "-=0.6"
-);
+        // NEW FIXED CODE
+        tl.fromTo(".hero-sub", 
+            { y: 30, opacity: 0 },      // Start State
+            { y: 0, opacity: 1, duration: 1, ease: "power3.out" }, // End State
+            "-=0.6"
+        );
 
         if(document.querySelector(".cv-wrapper")) {
             tl.from(".cv-wrapper", { 
@@ -238,7 +238,7 @@ if (menuToggle) {
             gsap.fromTo(mobileLinks, { y: 50, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 0.5, delay: 0.2 });
             
             menuToggle.classList.add("active");
-            mobileMenu.classList.add("active"); // <--- THIS WAS MISSING
+            mobileMenu.classList.add("active");
             document.body.style.overflow = "hidden"; // FREEZE BACKGROUND
         
             isMenuOpen = true;
@@ -247,21 +247,19 @@ if (menuToggle) {
             gsap.to(mobileMenu, { y: "-100%", autoAlpha: 0, duration: 0.6 });
             
             menuToggle.classList.remove("active");
-            mobileMenu.classList.remove("active"); // <--- THIS WAS MISSING
+            mobileMenu.classList.remove("active");
             document.body.style.overflow = ""; // UNFREEZE
             isMenuOpen = false;
         }
     });
 
-    
-    
     // Close Menu when a link is clicked
     mobileLinks.forEach(link => {
         link.addEventListener("click", () => {
             gsap.to(mobileMenu, { y: "-100%", autoAlpha: 0, duration: 0.6 });
             
             menuToggle.classList.remove("active");
-            mobileMenu.classList.remove("active"); // <--- THIS WAS MISSING
+            mobileMenu.classList.remove("active");
             document.body.style.overflow = ""; // UNFREEZE
             isMenuOpen = false;
         });
@@ -269,7 +267,6 @@ if (menuToggle) {
 }
 
 // 11. CINEMATIC MOBILE SCROLL HIGHLIGHT
-// This makes projects "pop" and glow when they hit the center of the screen
 if (window.matchMedia("(max-width: 768px)").matches) {
     const projects = document.querySelectorAll('.project');
     
@@ -333,7 +330,6 @@ if (window.matchMedia("(max-width: 768px)").matches) {
 
     projects.forEach(p => observer.observe(p));
 }
-
 
 // 12. PROJECT PREVIEW REVEAL
 const previewEl = document.getElementById('preview-img');
@@ -431,6 +427,7 @@ function updateLiveClock() {
 // Update immediately, then every second
 updateLiveClock();
 setInterval(updateLiveClock, 1000);
+
 // --- EASTER EGG: MATRIX RAIN ---
 const secretCode = "matrix";
 let inputSequence = "";
@@ -520,7 +517,7 @@ if (canvas && ctx) {
             }
         }
     });
-}
+} // <--- CORRECTLY CLOSED MATRIX BLOCK
 
 // --- TAB TITLE ANIMATION ---
 const originalTitle = document.title;
@@ -534,9 +531,6 @@ window.addEventListener("focus", () => {
     document.title = originalTitle;
 }); 
 
-
-
-
 // --- CONSOLE SIGNATURE ---
 console.log(
     "%c  S W A Y A M . D E V  ", 
@@ -546,8 +540,8 @@ console.log(
     "%c System Online. Welcome to the source code. \n Looking for bugs? Good luck. ", 
     "color: #bfa5d8; font-family: monospace; font-size: 14px;"
 );
+
 // --- SYNTHESIZED AUDIO SYSTEM ---
-// Paste this at the VERY BOTTOM of script.js
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 
 class SystemSound {
@@ -567,7 +561,6 @@ class SystemSound {
         }
     }
 
-    // Add this inside your SystemSound class
     playBoot() {
         if (!this.enabled) return;
         const osc = this.ctx.createOscillator();
@@ -635,7 +628,6 @@ window.addEventListener("click", () => sfx.enable(), { once: true });
 window.addEventListener("keydown", () => sfx.enable(), { once: true });
 
 // 2. Attach to all interactive elements on ANY page
-// We use 'mouseover' on document to catch elements even if they are loaded later
 document.addEventListener("mouseover", (e) => {
     if (e.target.closest("a, button, .project, .nav-item, .tech-pill, .cv-btn")) {
         sfx.playHover();
@@ -699,7 +691,6 @@ function printOutput(text, isHTML = false) {
 }
 
 function executeCommand(cmd) {
-    // Split command into args (e.g., "color red" -> ["color", "red"])
     const parts = cmd.split(" ");
     const action = parts[0];
     const arg = parts[1];
@@ -740,13 +731,13 @@ function executeCommand(cmd) {
             break;
 
         case "matrix":
-            // Trigger our existing matrix function
             if (typeof toggleMatrix === "function") {
-                // We need to access the toggleMatrix function from your existing code
-                // NOTE: Ensure your existing matrix code exposes 'toggleMatrix' or simply re-trigger it here:
+                // Hack to toggle: simulate the key press sequence or direct call if exposed
+                // Since toggleMatrix is scoped, this might fail if canvas didn't load.
+                // But for now, we rely on the existing hack:
                 const event = new KeyboardEvent('keydown', {'key': 'm'});
-                // This is a hacky way to trigger the existing listener, better to expose the function
                 printOutput("Initializing Matrix Protocol...");
+                window.toggleMatrix(true);
                 // Simulate typing 'matrix' code
                 window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'm'}));
                 setTimeout(() => window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'a'})), 50);
@@ -754,18 +745,19 @@ function executeCommand(cmd) {
                 setTimeout(() => window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'r'})), 150);
                 setTimeout(() => window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'i'})), 200);
                 setTimeout(() => window.dispatchEvent(new KeyboardEvent('keydown', {'key': 'x'})), 250);
+            } else {
+                 printOutput("Error: Matrix Module not loaded (Canvas missing?).");
             }
             break;
 
         case "color":
             if (arg) {
                 document.documentElement.style.setProperty('--accent', arg);
-                // Also update the glow color
                 const glow = document.getElementById("ambient-glow");
                 if(glow) glow.style.background = `radial-gradient(circle, ${arg}40 0%, rgba(0, 0, 0, 0) 70%)`;
                 
                 printOutput(`SUCCESS: System accent changed to ${arg}`);
-                sfx.playBoot(); // Play powerup sound
+                sfx.playBoot();
             } else {
                 printOutput("Error: Please specify a color. (e.g., 'color red' or 'color #00ff00')");
             }
@@ -785,22 +777,16 @@ let tapTimer;
 
 if (logoTrigger) {
     logoTrigger.addEventListener('click', (e) => {
-        // Count taps
         tapCount++;
-        
-        // Reset count if too much time passes (500ms)
         clearTimeout(tapTimer);
         tapTimer = setTimeout(() => {
             tapCount = 0;
         }, 500);
 
-        // If 3 taps detected
         if (tapCount === 3) {
-            e.preventDefault(); // Stop page reload
+            e.preventDefault();
             toggleTerminal();
-            tapCount = 0; // Reset
-            
-            // Optional: Mobile Vibration Feedback
+            tapCount = 0;
             if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
         }
     });
@@ -810,9 +796,10 @@ if (logoTrigger) {
 const closeCmdBtn = document.getElementById("cmd-close-mobile");
 if (closeCmdBtn) {
     closeCmdBtn.addEventListener("click", () => {
-        toggleTerminal(); // Close it
+        toggleTerminal();
     });
 }
+
 // =========================================
 // 9. HOLOGRAPHIC TILT EFFECT (3D Cards)
 // =========================================
@@ -857,3 +844,4 @@ if (tiltCards.length > 0) {
         });
     });
 }
+// --- END OF FILE (Extra brace removed) ---
