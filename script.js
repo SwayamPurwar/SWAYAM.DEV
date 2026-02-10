@@ -264,3 +264,69 @@ if (menuToggle) {
         });
     });
 }
+
+// 11. CINEMATIC MOBILE SCROLL HIGHLIGHT
+// This makes projects "pop" and glow when they hit the center of the screen
+if (window.matchMedia("(max-width: 768px)").matches) {
+    const projects = document.querySelectorAll('.project');
+    
+    // Config: When 60% of the item is visible, trigger the effect
+    const observerOptions = {
+        root: null,
+        rootMargin: "-20% 0px -20% 0px", // Focus area is the center 60% of screen
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // ACTIVE STATE (In Center)
+                gsap.to(entry.target, {
+                    scale: 1.03,                 // Subtle zoom
+                    backgroundColor: "#0a0a0a",  // Darker background
+                    borderColor: "rgba(255,255,255,0.8)", // Bright border
+                    boxShadow: "0 10px 30px -10px rgba(255,255,255,0.15)", // Soft Glow
+                    duration: 0.6,
+                    ease: "power3.out"
+                });
+                
+                // Animate the Title inside
+                gsap.to(entry.target.querySelector("h2"), {
+                    color: "#fff",
+                    x: 10,                       // Slide text right
+                    duration: 0.6
+                });
+
+                // Animate the Meta text (Date/Type)
+                gsap.to(entry.target.querySelector(".project-meta"), {
+                    color: "#ccc",
+                    duration: 0.6
+                });
+
+            } else {
+                // INACTIVE STATE (scrolled away)
+                gsap.to(entry.target, {
+                    scale: 1,
+                    backgroundColor: "transparent",
+                    borderColor: "#222",        // Back to dim border
+                    boxShadow: "none",
+                    duration: 0.6,
+                    ease: "power3.out"
+                });
+
+                gsap.to(entry.target.querySelector("h2"), {
+                    color: "#888",
+                    x: 0,                       // Slide text back
+                    duration: 0.6
+                });
+
+                gsap.to(entry.target.querySelector(".project-meta"), {
+                    color: "#666",
+                    duration: 0.6
+                });
+            }
+        });
+    }, observerOptions);
+
+    projects.forEach(p => observer.observe(p));
+}
